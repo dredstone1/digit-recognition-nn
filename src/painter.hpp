@@ -2,10 +2,25 @@
 #define PAINTER
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Graphics/Color.hpp>
 #include <atomic>
 #include <memory>
 #include <thread>
 #include <vector>
+
+constexpr sf::Color BG_COLOR(100, 100, 100);
+constexpr sf::Color PANELS_BG(255, 255, 255);
+
+constexpr std::uint32_t WINDOW_HEIGHT = 600;
+constexpr std::uint32_t WINDOW_WIDTH = 1000;
+
+constexpr std::uint32_t UI_GAP = 15;
+constexpr float PIXEL_GAP = 1;
+
+constexpr std::uint32_t CANVAS_SIZE = WINDOW_HEIGHT - UI_GAP * 2;
+
+constexpr int GRID_SIZE = 28;
+
 
 class Painter {
   private:
@@ -15,6 +30,8 @@ class Painter {
 	std::atomic<bool> enter{false};
 
 	void reset();
+
+	void renderCanvas();
 
   public:
 	Painter();
