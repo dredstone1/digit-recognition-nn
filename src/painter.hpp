@@ -2,7 +2,6 @@
 #define PAINTER
 
 #include <SFML/Graphics.hpp>
-#include <SFML/Graphics/Color.hpp>
 #include <atomic>
 #include <memory>
 #include <thread>
@@ -21,16 +20,26 @@ constexpr std::uint32_t CANVAS_SIZE = WINDOW_HEIGHT - UI_GAP * 2;
 
 constexpr int GRID_SIZE = 28;
 
+constexpr float CELL_SIZE = (CANVAS_SIZE - (GRID_SIZE - 1) * PIXEL_GAP) / GRID_SIZE;
+
+enum class MouseMode {
+	paint,
+	remove,
+	none,
+};
 
 class Painter {
   private:
 	sf::RenderWindow window;
+	std::atomic<bool> enter{false};
 
 	std::vector<float> values;
-	std::atomic<bool> enter{false};
+
+	MouseMode mouseActive{MouseMode::none};
 
 	void reset();
 
+	void processEvents();
 	void renderCanvas();
 
   public:
@@ -38,8 +47,10 @@ class Painter {
 	~Painter() = default;
 
 	void open();
+
 	bool checkEnter() const;
 	void cancleEnter();
+
 	const std::vector<float> &getValues() { return values; }
 };
 

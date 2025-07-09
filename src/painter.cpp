@@ -1,4 +1,5 @@
 #include "painter.hpp"
+#include <SFML/System/Vector2.hpp>
 
 Painter::Painter()
     : window(sf::VideoMode({WINDOW_WIDTH, WINDOW_HEIGHT}), "SFML Window"),
@@ -9,6 +10,7 @@ void Painter::open() {
 	while (window.isOpen()) {
 		window.clear(BG_COLOR);
 
+		processEvents();
 		renderCanvas();
 
 		window.display();
@@ -17,18 +19,40 @@ void Painter::open() {
 	window.close();
 }
 
-void Painter::renderCanvas() {
-	const float cellSize = (CANVAS_SIZE - (GRID_SIZE - 1) * PIXEL_GAP) / GRID_SIZE;
+void Painter::processEvents() {
+	while (const std::optional event = window.pollEvent()) {
+		if (event->is<sf::Event::Closed>()) {
+			window.close();
+		} else if (const auto *mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>()) {
+			if (mouseButtonPressed->button == sf::Mouse::Button::Right) {
+				mouseActive = MouseMode::remove;
+			} else {
+				mouseActive = MouseMode::paint;
+			}
+		} else if (event->is<sf::Event::MouseButtonReleased>()) {
+			mouseActive = MouseMode::none;
+		}
+	}
+}
 
-	sf::RectangleShape cell(sf::Vector2f(cellSize, cellSize));
-	values[4] = 1;
+void Painter::renderCanvas() {
+	sf::RectangleShape cell(sf::Vector2f(CELL_SIZE, CELL_SIZE));
+
 	int currentPixel = 0;
 	for (int y = 0; y < GRID_SIZE; ++y) {
 		for (int x = 0; x < GRID_SIZE; ++x) {
-			float posX = UI_GAP + x * (cellSize + PIXEL_GAP);
-			float posY = UI_GAP + y * (cellSize + PIXEL_GAP);
+			cell.setPosition({UI_GAP + x * (CELL_SIZE + PIXEL_GAP),
+			                  UI_GAP + y * (CELL_SIZE + PIXEL_GAP)});
 
-			cell.setPosition({posX, posY});
+			if (mouseActive != MouseMode::none &&
+			    cell.getGlobalBounds().contains(sf::Vector2f(sf::Mouse::getPosition(window)))) {
+
+				if (mouseActive == MouseMode::paint) {
+					values[currentPixel] = 255;
+				} else {
+					values[currentPixel] = 0;
+				}
+			}
 
 			int currentValue = values[currentPixel];
 			cell.setFillColor(sf::Color(currentValue, currentValue, currentValue));
@@ -39,6 +63,7 @@ void Painter::renderCanvas() {
 		}
 	}
 }
+
 void Painter::reset() {
 	for (auto &value : values) {
 		value = 0;
