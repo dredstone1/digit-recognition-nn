@@ -24,22 +24,23 @@ FetchContent_Declare(NeuralNetwork
 
 FetchContent_MakeAvailable(SFML NeuralNetwork)
 
-# --- Collect source files for this project ---
-file(GLOB_RECURSE PROJECT_SOURCES CONFIGURE_DEPENDS
+# --- Collect source files for the library (all except main) ---
+file(GLOB_RECURSE LIB_SOURCES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
 )
 
-# --- Create static library from local sources ---
-add_library(digit_nn STATIC ${PROJECT_SOURCES})
+# Optionally, exclude main.cpp from LIB_SOURCES if it exists there
+list(FILTER LIB_SOURCES EXCLUDE REGEX ".*main.cpp$")
+
+# --- Create static library from local sources (without main.cpp) ---
+add_library(digit_nn STATIC ${LIB_SOURCES})
 set_target_properties(digit_nn PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
-# --- Include directories ---
 target_include_directories(digit_nn
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-# --- Link external libraries ---
 target_link_libraries(digit_nn
     PUBLIC
         SFML::Graphics
@@ -48,4 +49,17 @@ target_link_libraries(digit_nn
         NeuralNetwork
 )
 
-message(STATUS "Configured digit-recognition-nn")
+# --- Create executable ---
+add_executable(digit-recognition-nn main.cpp)
+
+target_link_libraries(digit-recognition-nn
+    PRIVATE
+        digit_nn
+        SFML::Graphics
+        SFML::Window
+        SFML::System
+        NeuralNetwork
+)
+
+message(STATUS "Configured digit-recognition-nn executable")
+

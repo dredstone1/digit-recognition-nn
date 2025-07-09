@@ -2,13 +2,14 @@
 #include <AiModel.hpp>
 
 int main() {
-	nn::AiModel model("");
+	nn::AiModel model("../ModelData/config.json");
 
 	model.train();
 
-	painter display;
-
+	App display;
 	display.open();
 
+	while (true) {
+	}
 	return 0;
 }
