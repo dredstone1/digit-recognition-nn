@@ -9,14 +9,20 @@
 
 class Painter {
   private:
+	sf::RenderWindow window;
+
 	std::vector<float> values;
+	std::atomic<bool> enter{false};
+
+	void reset();
 
   public:
 	Painter();
 	~Painter() = default;
 
 	void open();
-	void reset();
+	bool checkEnter() const;
+	void cancleEnter();
 	const std::vector<float> &getValues() { return values; }
 };
 
@@ -26,14 +32,13 @@ class App {
 	std::unique_ptr<Painter> painter;
 	std::atomic<bool> running{false};
 
-    void start();
+	void start();
 
   public:
 	App();
 	~App() = default;
 
 	void open();
-	void reset();
 	void wait();
 	const std::vector<float> &getValues();
 };
