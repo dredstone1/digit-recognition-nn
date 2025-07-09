@@ -4,9 +4,11 @@
 int main() {
 	nn::AiModel model("");
 
-    model.train();
+	model.train();
 
-	painter display();
+	painter display;
+
+	display.open();
 
 	return 0;
 }
