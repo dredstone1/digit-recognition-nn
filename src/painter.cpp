@@ -31,6 +31,12 @@ void Painter::processEvents() {
 			}
 		} else if (event->is<sf::Event::MouseButtonReleased>()) {
 			mouseActive = MouseMode::none;
+		} else if (const auto *keyPressed = event->getIf<sf::Event::KeyPressed>()) {
+			if (keyPressed->scancode == sf::Keyboard::Scancode::Enter) {
+				enter = true;
+			} else if (keyPressed->scancode == sf::Keyboard::Scancode::R) {
+				reset();
+			}
 		}
 	}
 }
@@ -54,7 +60,7 @@ void Painter::renderCanvas() {
 				}
 			}
 
-			int currentValue = values[currentPixel];
+			auto currentValue = values[currentPixel];
 			cell.setFillColor(sf::Color(currentValue, currentValue, currentValue));
 
 			window.draw(cell);
