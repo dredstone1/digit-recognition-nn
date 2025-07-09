@@ -7,19 +7,19 @@
 		]
 	},
 	"training config": {
-		"batch_size": 1,
+		"batch_size": 8,
 		"batch_count": 10000,
-		"db_filename": "../ModelData/database",
-		"lr_init_value": 0.25
+		"db_filename": "../ModelData/data",
+		"lr_init_value": 0.000001
 	},
 	"network config": [
 		{
 			"type": "FNN",
-			"input size": 100,
+			"input size": 784,
 			"output size": 10,
 			"layers": [
-				{ "size": 30, "activationType": 1 },
-				{ "size": 20, "activationType": 1 }
+				{ "size": 1000, "activationType": 1 },
+				{ "size": 500, "activationType": 1 }
 			]
 		}
 	]
