@@ -3,4 +3,13 @@
 
 #include <SFML/System/Vector2.hpp>
 
-#endif //PAINTER
+class painter {
+
+  public:
+	painter();
+	~painter() = default;
+
+	void open();
+};
+
+#endif // PAINTER
