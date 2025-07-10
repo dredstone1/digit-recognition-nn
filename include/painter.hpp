@@ -11,7 +11,7 @@ constexpr sf::Color BG_COLOR(100, 100, 100);
 constexpr sf::Color PANELS_BG(255, 255, 255);
 
 constexpr std::uint32_t WINDOW_HEIGHT = 600;
-constexpr std::uint32_t WINDOW_WIDTH = 1000;
+constexpr std::uint32_t WINDOW_WIDTH = 600;
 
 constexpr std::uint32_t UI_GAP = 15;
 constexpr float PIXEL_GAP = 1;
@@ -21,6 +21,8 @@ constexpr std::uint32_t CANVAS_SIZE = WINDOW_HEIGHT - UI_GAP * 2;
 constexpr int GRID_SIZE = 28;
 
 constexpr float CELL_SIZE = (CANVAS_SIZE - (GRID_SIZE - 1) * PIXEL_GAP) / GRID_SIZE;
+
+const std::string WINDOW_NAME = "painter";
 
 enum class MouseMode {
 	paint,

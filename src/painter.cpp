@@ -1,7 +1,7 @@
 #include "../include/painter.hpp"
 
 Painter::Painter()
-    : window(sf::VideoMode({WINDOW_WIDTH, WINDOW_HEIGHT}), "SFML Window"),
+    : window(sf::VideoMode({WINDOW_WIDTH, WINDOW_HEIGHT}), WINDOW_NAME),
       values(GRID_SIZE * GRID_SIZE) {
 }
 
