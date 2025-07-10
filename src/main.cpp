@@ -9,7 +9,7 @@ int main() {
 	App display;
 	display.open();
 
-	while (true) {
+	while (display.isOpen()) {
 		display.wait();
 
 		model.runModel(display.getValues());

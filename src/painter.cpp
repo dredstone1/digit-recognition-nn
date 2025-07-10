@@ -6,7 +6,7 @@ Painter::Painter()
 }
 
 void Painter::open() {
-	while (window.isOpen()) {
+	while (window.isOpen() && running) {
 		window.clear(BG_COLOR);
 
 		processEvents();
@@ -18,10 +18,14 @@ void Painter::open() {
 	window.close();
 }
 
+void Painter::close() {
+	running = false;
+}
+
 void Painter::processEvents() {
 	while (const std::optional event = window.pollEvent()) {
 		if (event->is<sf::Event::Closed>()) {
-			window.close();
+			running = false;
 		} else if (const auto *mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>()) {
 			if (mouseButtonPressed->button == sf::Mouse::Button::Right) {
 				mouseActive = MouseMode::remove;
@@ -83,9 +87,6 @@ bool Painter::checkEnter() const {
 	return enter;
 }
 
-App::App() {
-}
-
 void App::open() {
 	if (running)
 		return;
@@ -106,12 +107,27 @@ void App::start() {
 	painter->open();
 }
 
+void App::close() {
+	running = false;
+
+	if (displayThread.joinable()) {
+		if (painter) {
+			painter->close();
+		}
+
+		displayThread.join();
+	}
+}
+
 void App::wait() {
 	if (!running) {
 		return;
 	}
 
-	while (!painter->checkEnter()) {
+	while (!painter->checkEnter() && running) {
+		if (!painter->isRunning()) {
+			close();
+		}
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}
 

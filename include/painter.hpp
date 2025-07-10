@@ -33,6 +33,8 @@ class Painter {
 	sf::RenderWindow window;
 	std::atomic<bool> enter{false};
 
+	std::atomic<bool> running{true};
+
 	std::vector<float> values;
 
 	MouseMode mouseActive{MouseMode::none};
@@ -47,11 +49,14 @@ class Painter {
 	~Painter() = default;
 
 	void open();
+	void close();
 
 	bool checkEnter() const;
 	void cancleEnter();
 
 	const std::vector<float> &getValues() { return values; }
+
+	bool isRunning() { return running; }
 };
 
 class App {
@@ -61,13 +66,17 @@ class App {
 	std::atomic<bool> running{false};
 
 	void start();
+	void close();
 
   public:
-	App();
+	App() {}
 	~App() = default;
 
 	void open();
 	void wait();
+
+	bool isOpen() { return running; }
+
 	const std::vector<float> &getValues();
 };
 
