@@ -3,7 +3,7 @@
 
 int main() {
 	nn::AiModel model("../ModelData/config.json");
-	// model.train();
+	model.train();
 
 	App display;
 	display.open();

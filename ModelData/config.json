@@ -7,10 +7,10 @@
 		]
 	},
 	"training config": {
-		"batch_size": 8,
-		"batch_count": 10000,
-		"db_filename": "../ModelData/data",
-		"lr_init_value": 0.000001
+		"batch_size": 16,
+		"batch_count": 100000,
+		"db_filename": "../ModelData/data1",
+		"lr_init_value": 0.0001
 	},
 	"network config": [
 		{
@@ -18,8 +18,9 @@
 			"input size": 784,
 			"output size": 10,
 			"layers": [
-				{ "size": 1000, "activationType": 1 },
-				{ "size": 500, "activationType": 1 }
+				{ "size": 100, "activationType": 1 },
+				{ "size": 70, "activationType": 1 },
+				{ "size": 30, "activationType": 1 }
 			]
 		}
 	]
