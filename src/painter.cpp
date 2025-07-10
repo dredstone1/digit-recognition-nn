@@ -1,5 +1,4 @@
-#include "painter.hpp"
-#include <SFML/System/Vector2.hpp>
+#include "../include/painter.hpp"
 
 Painter::Painter()
     : window(sf::VideoMode({WINDOW_WIDTH, WINDOW_HEIGHT}), "SFML Window"),

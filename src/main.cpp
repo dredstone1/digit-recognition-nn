@@ -1,9 +1,10 @@
-#include "src/painter.hpp"
+#include "../include/painter.hpp"
 #include <AiModel.hpp>
 
 int main() {
 	nn::AiModel model("../ModelData/config.json");
 	model.train();
+    model.save("params");
 
 	App display;
 	display.open();
