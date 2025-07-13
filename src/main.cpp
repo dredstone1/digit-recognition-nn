@@ -3,7 +3,7 @@
 
 int main() {
 	nn::AiModel model("../ModelData/config.json");
-	model.train();
+	model.train("../ModelData/data1");
 	model.save("params");
 
 	App display;
@@ -13,7 +13,7 @@ int main() {
 		display.wait();
 
 		model.runModel(display.getValues());
-		printf("output: %d, %f\n", model.getPrediction().index, model.getPrediction().value);
+		printf("output: %zu, %f\n", model.getPrediction().index, model.getPrediction().value);
 	}
 
 	return 0;
