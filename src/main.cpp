@@ -5,6 +5,8 @@ int main() {
 	nn::AiModel model("../ModelData/config.json");
 	model.train("../ModelData/data1");
 	model.save("params");
+	nn::model::modelResult result = model.evaluateModel("../ModelData/data");
+	printf("prediction: %f\n", result.percentage);
 
 	App display;
 	display.open();

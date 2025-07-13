@@ -1,4 +1,5 @@
 #include "../include/painter.hpp"
+#include <cmath>
 
 Painter::Painter()
     : window(sf::VideoMode({WINDOW_WIDTH, WINDOW_HEIGHT}), WINDOW_NAME),
@@ -47,27 +48,45 @@ void Painter::processEvents() {
 void Painter::renderCanvas() {
 	sf::RectangleShape cell(sf::Vector2f(CELL_SIZE, CELL_SIZE));
 
+	if (mouseActive != MouseMode::none) {
+		sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+		int mouseGridX = (mousePos.x - UI_GAP) / (CELL_SIZE + PIXEL_GAP);
+		int mouseGridY = (mousePos.y - UI_GAP) / (CELL_SIZE + PIXEL_GAP);
+
+		const float sigma = BRUSH_RADIUS * 0.5f;
+		const float maxStrength = 25.f;
+
+		for (int dy = -BRUSH_RADIUS; dy <= BRUSH_RADIUS; ++dy) {
+			for (int dx = -BRUSH_RADIUS; dx <= BRUSH_RADIUS; ++dx) {
+				int px = mouseGridX + dx;
+				int py = mouseGridY + dy;
+
+				if (px >= 0 && px < GRID_SIZE && py >= 0 && py < GRID_SIZE) {
+					float distance = std::sqrt(dx * dx + dy * dy);
+					if (distance <= BRUSH_RADIUS) {
+						float strength = std::exp(-(distance * distance) / (2 * sigma * sigma));
+						int index = py * GRID_SIZE + px;
+
+						if (mouseActive == MouseMode::paint) {
+							values[index] = std::min(255.f, values[index] + strength * maxStrength);
+						} else {
+							values[index] = std::max(0.f, values[index] - strength * maxStrength);
+						}
+					}
+				}
+			}
+		}
+	}
+
 	int currentPixel = 0;
 	for (int y = 0; y < GRID_SIZE; ++y) {
 		for (int x = 0; x < GRID_SIZE; ++x) {
 			cell.setPosition({UI_GAP + x * (CELL_SIZE + PIXEL_GAP),
 			                  UI_GAP + y * (CELL_SIZE + PIXEL_GAP)});
 
-			if (mouseActive != MouseMode::none &&
-			    cell.getGlobalBounds().contains(sf::Vector2f(sf::Mouse::getPosition(window)))) {
-
-				if (mouseActive == MouseMode::paint) {
-					values[currentPixel] = 255;
-				} else {
-					values[currentPixel] = 0;
-				}
-			}
-
-			auto currentValue = values[currentPixel];
+			auto currentValue = std::min(255.f, values[currentPixel]);
 			cell.setFillColor(sf::Color(currentValue, currentValue, currentValue));
-
 			window.draw(cell);
-
 			currentPixel++;
 		}
 	}
