@@ -1,5 +1,4 @@
 #include "../include/painter.hpp"
-#include "Globals.hpp"
 #include <AiModel.hpp>
 
 int getAction(const int start, const int end) {
@@ -67,6 +66,10 @@ void move(nn::global::ParamMetrix &metrix, const box &bound, const int h, const 
 }
 
 nn::global::Transformation doTransform = [](const nn::global::ParamMetrix &p) {
+	static App display;
+	display.open();
+	// display.setValues(p);
+
 	nn::global::ParamMetrix newSample = p;
 
 	box gridBox = getBox(newSample);
@@ -81,13 +84,14 @@ nn::global::Transformation doTransform = [](const nn::global::ParamMetrix &p) {
 
 	move(newSample, gridBox, horizotal, vertical);
 
-	return newSample;
+	display.setValues(newSample);
+	return display.getValues();
 };
 
 int main() {
 	nn::AiModel model("../ModelData/config.json");
 
-	model.load("params");
+	// model.load("params");
 	model.train("../ModelData/data1", doTransform);
 	model.save("params");
 

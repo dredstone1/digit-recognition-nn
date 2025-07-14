@@ -24,7 +24,6 @@ constexpr float CELL_SIZE = (CANVAS_SIZE - (GRID_SIZE - 1) * PIXEL_GAP) / GRID_S
 
 const std::string WINDOW_NAME = "painter";
 
-
 enum class MouseMode {
 	paint,
 	remove,
@@ -62,6 +61,7 @@ class Painter {
 	void cancleEnter();
 
 	const std::vector<float> &getValues() { return values; }
+	void setValues(const std::vector<float> &values_) { values = values_; }
 
 	bool isRunning() { return running; }
 };
@@ -85,6 +85,7 @@ class App {
 	bool isOpen() { return running; }
 
 	const std::vector<float> &getValues();
+	void setValues(const std::vector<float> &values) { painter->setValues(values); }
 };
 
 #endif // PAINTER
