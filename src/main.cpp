@@ -3,6 +3,7 @@
 
 int main() {
 	nn::AiModel model("../ModelData/config.json");
+    model.load("params");
 	model.train("../ModelData/data1");
 	model.save("params");
 	nn::model::modelResult result = model.evaluateModel("../ModelData/data");

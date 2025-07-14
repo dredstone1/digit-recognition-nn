@@ -1,4 +1,5 @@
 #include "../include/painter.hpp"
+#include <algorithm>
 #include <cmath>
 
 Painter::Painter()
@@ -40,54 +41,68 @@ void Painter::processEvents() {
 				enter = true;
 			} else if (keyPressed->scancode == sf::Keyboard::Scancode::R) {
 				reset();
+			} else if (keyPressed->scancode == sf::Keyboard::Scancode::Down) {
+				if (brushRadius > 0)
+					brushRadius--;
+			} else if (keyPressed->scancode == sf::Keyboard::Scancode::Up) {
+                if (brushRadius < 10)
+				brushRadius++;
 			}
 		}
 	}
 }
 
 void Painter::renderCanvas() {
-	sf::RectangleShape cell(sf::Vector2f(CELL_SIZE, CELL_SIZE));
-
 	if (mouseActive != MouseMode::none) {
-		sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-		int mouseGridX = (mousePos.x - UI_GAP) / (CELL_SIZE + PIXEL_GAP);
-		int mouseGridY = (mousePos.y - UI_GAP) / (CELL_SIZE + PIXEL_GAP);
+		applyBrush();
+	}
+	drawCanvas();
+}
 
-		const float sigma = BRUSH_RADIUS * 0.5f;
-		const float maxStrength = 25.f;
+void Painter::applyBrush() {
+	sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+	int mouseGridX = (mousePos.x - UI_GAP) / (CELL_SIZE + PIXEL_GAP);
+	int mouseGridY = (mousePos.y - UI_GAP) / (CELL_SIZE + PIXEL_GAP);
 
-		for (int dy = -BRUSH_RADIUS; dy <= BRUSH_RADIUS; ++dy) {
-			for (int dx = -BRUSH_RADIUS; dx <= BRUSH_RADIUS; ++dx) {
-				int px = mouseGridX + dx;
-				int py = mouseGridY + dy;
+	const float sigma = brushRadius * 0.5f;
+	const float maxStrength = 25.f;
+	const float radiusSquared = brushRadius * brushRadius;
 
-				if (px >= 0 && px < GRID_SIZE && py >= 0 && py < GRID_SIZE) {
-					float distance = std::sqrt(dx * dx + dy * dy);
-					if (distance <= BRUSH_RADIUS) {
-						float strength = std::exp(-(distance * distance) / (2 * sigma * sigma));
-						int index = py * GRID_SIZE + px;
+	for (int dy = -brushRadius; dy <= brushRadius; ++dy) {
+		for (int dx = -brushRadius; dx <= brushRadius; ++dx) {
+			int px = mouseGridX + dx;
+			int py = mouseGridY + dy;
 
-						if (mouseActive == MouseMode::paint) {
-							values[index] = std::min(255.f, values[index] + strength * maxStrength);
-						} else {
-							values[index] = std::max(0.f, values[index] - strength * maxStrength);
-						}
+			if (px >= 0 && px < GRID_SIZE && py >= 0 && py < GRID_SIZE) {
+				float distSquared = dx * dx + dy * dy;
+				if (distSquared <= radiusSquared) {
+					float strength = std::exp(-distSquared / (2 * sigma * sigma));
+					int index = py * GRID_SIZE + px;
+
+					if (mouseActive == MouseMode::paint) {
+						values[index] = std::min(255.f, values[index] + strength * maxStrength);
+					} else { // erase
+						values[index] = std::max(0.f, values[index] - strength * maxStrength);
 					}
 				}
 			}
 		}
 	}
+}
 
-	int currentPixel = 0;
+void Painter::drawCanvas() {
+	sf::RectangleShape cell(sf::Vector2f(CELL_SIZE, CELL_SIZE));
+	int index = 0;
+
 	for (int y = 0; y < GRID_SIZE; ++y) {
 		for (int x = 0; x < GRID_SIZE; ++x) {
 			cell.setPosition({UI_GAP + x * (CELL_SIZE + PIXEL_GAP),
 			                  UI_GAP + y * (CELL_SIZE + PIXEL_GAP)});
 
-			auto currentValue = std::min(255.f, values[currentPixel]);
-			cell.setFillColor(sf::Color(currentValue, currentValue, currentValue));
+			float value = std::clamp(values[index], 0.f, 255.f);
+			cell.setFillColor(sf::Color(value, value, value));
 			window.draw(cell);
-			currentPixel++;
+			++index;
 		}
 	}
 }

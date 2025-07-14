@@ -24,7 +24,6 @@ constexpr float CELL_SIZE = (CANVAS_SIZE - (GRID_SIZE - 1) * PIXEL_GAP) / GRID_S
 
 const std::string WINDOW_NAME = "painter";
 
-constexpr int BRUSH_RADIUS = 2;
 
 enum class MouseMode {
 	paint,
@@ -36,10 +35,11 @@ class Painter {
   private:
 	sf::RenderWindow window;
 	std::atomic<bool> enter{false};
-
 	std::atomic<bool> running{true};
 
 	std::vector<float> values;
+
+	int brushRadius = 1;
 
 	MouseMode mouseActive{MouseMode::none};
 
@@ -47,6 +47,9 @@ class Painter {
 
 	void processEvents();
 	void renderCanvas();
+
+	void drawCanvas();
+	void applyBrush();
 
   public:
 	Painter();
