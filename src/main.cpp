@@ -1,13 +1,22 @@
 #include "../include/painter.hpp"
 #include <AiModel.hpp>
 
-int getAction(const int start, const int end) {
-	std::random_device rd;
-	std::mt19937 gen(rd());
-	std::uniform_int_distribution<> dist(start, end);
+class RandomGenerator {
+	std::mt19937 gen;
 
-	int number = dist(gen);
-	return number;
+  public:
+	RandomGenerator() : gen(std::random_device{}()) {}
+
+	int getInt(int start, int end) {
+		std::uniform_int_distribution<> dist(start, end);
+		return dist(gen);
+	}
+};
+
+static RandomGenerator rng;
+
+int getAction(const int start, const int end) {
+	return rng.getInt(start, end);
 }
 
 struct box {
@@ -21,14 +30,14 @@ box getBox(const nn::global::ParamMetrix &metrix) {
 	int min_x = 28, min_y = 28;
 	int max_x = -1, max_y = -1;
 
-	for (int row = 0; row < 28; ++row) {
-		for (int col = 0; col < 28; ++col) {
-			if (metrix[row * 28 + col] > 0) {
-				min_x = std::min(min_x, col);
-				max_x = std::max(max_x, col);
-				min_y = std::min(min_y, row);
-				max_y = std::max(max_y, row);
-			}
+	for (int i = 0; i < 784; ++i) {
+		if (metrix[i] > 0) {
+			int row = i / 28;
+			int col = i % 28;
+			min_x = std::min(min_x, col);
+			max_x = std::max(max_x, col);
+			min_y = std::min(min_y, row);
+			max_y = std::max(max_y, row);
 		}
 	}
 
@@ -44,8 +53,8 @@ box getBox(const nn::global::ParamMetrix &metrix) {
 }
 
 void move(nn::global::ParamMetrix &metrix, const box &bound, const int h, const int v) {
-	const int size = 28;
-	nn::global::ParamMetrix temp(size * size, 0.0f);
+	static thread_local nn::global::ParamMetrix temp(28 * 28);
+	std::fill(temp.begin(), temp.end(), 0.0f);
 
 	for (int y = 0; y < bound.height; ++y) {
 		for (int x = 0; x < bound.width; ++x) {
@@ -55,19 +64,21 @@ void move(nn::global::ParamMetrix &metrix, const box &bound, const int h, const 
 			int dst_x = src_x + h;
 			int dst_y = src_y + v;
 
-			if (dst_x >= 0 && dst_x < size && dst_y >= 0 && dst_y < size) {
-				float value = metrix[src_y * size + src_x];
-				temp[dst_y * size + dst_x] = value;
+			if (dst_x >= 0 && dst_x < 28 && dst_y >= 0 && dst_y < 28) {
+				temp[dst_y * 28 + dst_x] = metrix[src_y * 28 + src_x];
 			}
 		}
 	}
 
-	metrix = std::move(temp);
+	std::swap(metrix, temp);
 }
 
 nn::global::Transformation doTransform = [](const nn::global::ParamMetrix &p) {
 	static App display;
-	display.open();
+	static bool isOpen = false;
+	if (!isOpen)
+		display.open();
+	isOpen = true;
 	// display.setValues(p);
 
 	nn::global::ParamMetrix newSample = p;

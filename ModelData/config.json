@@ -15,7 +15,7 @@
 			"dataFilenameAutoSave": "model.txt"
 		},
 		"auto evaluating": {
-			"evaluateEvery": 1000,
+			"evaluateEvery": 20000,
 			"dataBaseFilename": "../ModelData/data"
 		}
 	},
