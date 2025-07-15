@@ -99,12 +99,19 @@ nn::global::Transformation doTransform = [](const nn::global::ParamMetrix &p) {
 	return display.getValues();
 };
 
-int main() {
+int main(int argc, char *argv[]) {
 	nn::AiModel model("../ModelData/config.json");
 
-	// model.load("params");
-	model.train("../ModelData/data1", doTransform);
-	model.save("params");
+	for (int i = 1; i < argc; ++i) {
+		std::string arg = argv[i];
+
+		if (arg == "-l") {
+			model.load("params");
+		} else if (arg == "-t") {
+			model.train("../ModelData/data1", doTransform);
+			model.save("params");
+		}
+	}
 
 	nn::model::modelResult result = model.evaluateModel("../ModelData/data");
 	printf("prediction: %f\n", result.percentage);
