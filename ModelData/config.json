@@ -7,7 +7,7 @@
 		]
 	},
 	"training config": {
-		"batch size": 8,
+		"batch size": 32,
 		"batch count": 1000000,
 		"learning rate": 0.0001,
 		"auto save": {
@@ -25,8 +25,8 @@
 			"input size": 784,
 			"output size": 10,
 			"layers": [
-				{ "size": 30, "activationType": 1 },
-				{ "size": 20, "activationType": 1 }
+				{ "size": 128, "activationType": 1 },
+				{ "size": 64, "activationType": 1 }
 			]
 		}
 	]
