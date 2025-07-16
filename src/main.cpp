@@ -1,6 +1,6 @@
 #include "../include/painter.hpp"
-#include <model.hpp>
 #include <iostream>
+#include <model.hpp>
 
 class RandomGenerator {
 	std::mt19937 gen;

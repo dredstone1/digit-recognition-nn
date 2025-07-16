@@ -45,8 +45,8 @@ void Painter::processEvents() {
 				if (brushRadius > 0)
 					brushRadius--;
 			} else if (keyPressed->scancode == sf::Keyboard::Scancode::Up) {
-                if (brushRadius < 10)
-				brushRadius++;
+				if (brushRadius < 10)
+					brushRadius++;
 			}
 		}
 	}
