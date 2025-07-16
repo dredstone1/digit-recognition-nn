@@ -7,15 +7,15 @@
 		]
 	},
 	"training config": {
-		"batch size": 32,
+		"batch size": 16,
 		"batch count": 100000,
 		"learning rate": 0.001,
 		"auto save": {
-			"saveEvery": 1000,
+			"saveEvery": 100,
 			"dataFilenameAutoSave": "model.txt"
 		},
 		"auto evaluating": {
-			"evaluateEvery": 1000,
+			"evaluateEvery": 100,
 			"dataBaseFilename": "../ModelData/data"
 		}
 	},
@@ -24,11 +24,12 @@
 			"type": "FNN",
 			"input size": 784,
 			"output size": 10,
+			"output activation": 4,
 			"layers": [
-				{ "size": 128, "activationType": 1 },
-				{ "size": 64, "activationType": 1 }
+				{ "size": 600, "activationType": 1 },
+				{ "size": 400, "activationType": 1 },
+				{ "size": 300, "activationType": 1 }
 			]
 		}
 	]
 }
-

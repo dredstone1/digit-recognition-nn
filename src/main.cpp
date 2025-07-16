@@ -1,5 +1,6 @@
 #include "../include/painter.hpp"
-#include <AiModel.hpp>
+#include <model.hpp>
+#include <iostream>
 
 class RandomGenerator {
 	std::mt19937 gen;
@@ -15,7 +16,7 @@ class RandomGenerator {
 
 static RandomGenerator rng;
 
-int getAction(const int start, const int end) {
+static int getAction(const int start, const int end) {
 	return rng.getInt(start, end);
 }
 
@@ -26,7 +27,7 @@ struct box {
 	int height;
 };
 
-box getBox(const nn::global::ParamMetrix &metrix) {
+static box getBox(const nn::global::ParamMetrix &metrix) {
 	int min_x = 28, min_y = 28;
 	int max_x = -1, max_y = -1;
 
@@ -52,7 +53,7 @@ box getBox(const nn::global::ParamMetrix &metrix) {
 	    max_y - min_y + 1};
 }
 
-void move(nn::global::ParamMetrix &metrix, const box &bound, const int h, const int v) {
+static void move(nn::global::ParamMetrix &metrix, const box &bound, const int h, const int v) {
 	static thread_local nn::global::ParamMetrix temp(28 * 28);
 	std::fill(temp.begin(), temp.end(), 0.0f);
 
@@ -73,18 +74,7 @@ void move(nn::global::ParamMetrix &metrix, const box &bound, const int h, const 
 	std::swap(metrix, temp);
 }
 
-nn::global::Transformation doTransform = [](const nn::global::ParamMetrix &p) {
-	static App display;
-	static bool isOpen = false;
-	if (!isOpen)
-		display.open();
-	isOpen = true;
-	// display.setValues(p);
-
-	nn::global::ParamMetrix newSample = p;
-
-	box gridBox = getBox(newSample);
-
+static void addMovment(nn::global::ParamMetrix &metrix, const box &gridBox) {
 	int up = gridBox.y;
 	int down = 28 - (gridBox.y + gridBox.height);
 	int left = gridBox.x;
@@ -93,21 +83,36 @@ nn::global::Transformation doTransform = [](const nn::global::ParamMetrix &p) {
 	int horizotal = getAction(-left, right);
 	int vertical = getAction(-up, down);
 
-	move(newSample, gridBox, horizotal, vertical);
+	move(metrix, gridBox, horizotal, vertical);
+}
+
+static nn::global::Transformation doTransform = [](const nn::global::ParamMetrix &p) {
+	static App display;
+	static bool isOpen = false;
+	if (!isOpen)
+		display.open();
+	isOpen = true;
+
+	nn::global::ParamMetrix newSample = p;
+	box gridBox = getBox(newSample);
+
+	addMovment(newSample, gridBox);
 
 	display.setValues(newSample);
 	return display.getValues();
 };
 
 int main(int argc, char *argv[]) {
-	nn::AiModel model("../ModelData/config.json");
+	nn::model::Model model("../ModelData/config.json");
 
 	for (int i = 1; i < argc; ++i) {
 		std::string arg = argv[i];
 
 		if (arg == "-l") {
+			std::cout << "loading command\n";
 			model.load("params");
 		} else if (arg == "-t") {
+			std::cout << "training command\n";
 			model.train("../ModelData/data1", doTransform);
 			model.save("params");
 		}
