@@ -1,4 +1,6 @@
 #include "../include/painter.hpp"
+#include "Globals.hpp"
+#include <cstddef>
 #include <iostream>
 #include <model.hpp>
 
@@ -86,6 +88,28 @@ static void addMovment(nn::global::ParamMetrix &metrix, const box &gridBox) {
 	move(metrix, gridBox, horizotal, vertical);
 }
 
+constexpr float noiseStrength = 255.0f;  // Max noise offset
+constexpr float noiseProbability = 0.1f; // 5% chance to add noise
+
+static void addNoise(nn::global::ParamMetrix &metrix) {
+	static thread_local std::mt19937 gen(std::random_device{}());
+	std::uniform_real_distribution<float> noiseDist(-noiseStrength, noiseStrength);
+	std::uniform_real_distribution<float> chanceDist(0.0f, 1.0f);
+
+	for (float &val : metrix) {
+		if (chanceDist(gen) < noiseProbability) {
+			val += noiseDist(gen);
+			val = std::clamp(val, 1.0f, 255.0f); // Keep valid range
+		}
+	}
+}
+
+static void invert(nn::global::ParamMetrix &metrix) {
+	for (size_t i = 0; i < metrix.size(); ++i) {
+		metrix[i] = 255 - metrix[i];
+	}
+}
+
 static nn::global::Transformation doTransform = [](const nn::global::ParamMetrix &p) {
 	static App display;
 	static bool isOpen = false;
@@ -94,9 +118,20 @@ static nn::global::Transformation doTransform = [](const nn::global::ParamMetrix
 	isOpen = true;
 
 	nn::global::ParamMetrix newSample = p;
-	box gridBox = getBox(newSample);
 
+	// Apply movement
+	box gridBox = getBox(newSample);
 	addMovment(newSample, gridBox);
+
+	// Apply noise
+	if (rng.getInt(0, 1) == 0) {
+		addNoise(newSample);
+	}
+
+	// Apply noise
+	if (rng.getInt(0, 1) == 0) {
+        invert(newSample);
+	}
 
 	display.setValues(newSample);
 	return display.getValues();
@@ -110,11 +145,11 @@ int main(int argc, char *argv[]) {
 
 		if (arg == "-l") {
 			std::cout << "loading command\n";
-			model.load("params");
+			model.load("model.txt");
 		} else if (arg == "-t") {
 			std::cout << "training command\n";
 			model.train("../ModelData/data1", doTransform);
-			model.save("params");
+			model.save("model.txt");
 		}
 	}
 

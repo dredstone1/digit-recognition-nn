@@ -81,7 +81,7 @@ void Painter::applyBrush() {
 
 					if (mouseActive == MouseMode::paint) {
 						values[index] = std::min(255.f, values[index] + strength * maxStrength);
-					} else { // erase
+					} else {
 						values[index] = std::max(0.f, values[index] - strength * maxStrength);
 					}
 				}
