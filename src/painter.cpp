@@ -80,9 +80,9 @@ void Painter::applyBrush() {
 					int index = py * GRID_SIZE + px;
 
 					if (mouseActive == MouseMode::paint) {
-						values[index] = std::min(255.f, values[index] + strength * maxStrength);
+						values[index] = std::min(255.f, values[index] + strength * maxStrength) / 255;
 					} else {
-						values[index] = std::max(0.f, values[index] - strength * maxStrength);
+						values[index] = std::max(0.f, values[index] - strength * maxStrength) / 255;
 					}
 				}
 			}
@@ -99,7 +99,7 @@ void Painter::drawCanvas() {
 			cell.setPosition({UI_GAP + x * (CELL_SIZE + PIXEL_GAP),
 			                  UI_GAP + y * (CELL_SIZE + PIXEL_GAP)});
 
-			float value = std::clamp(values[index], 0.f, 255.f);
+			float value = std::clamp(values[index] * 255, 0.f, 255.f);
 			cell.setFillColor(sf::Color(value, value, value));
 			window.draw(cell);
 			++index;

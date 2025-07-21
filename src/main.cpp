@@ -146,6 +146,12 @@ static void dimOpacity(nn::global::ParamMetrix &metrix) {
 	}
 }
 
+static void stablize(nn::global::ParamMetrix &metrix) {
+	for (auto &value : metrix) {
+		value /= 255;
+	}
+}
+
 static nn::global::Transformation doTransform = [](const nn::global::ParamMetrix &p) {
 	static App display;
 	static bool isOpen = false;
@@ -154,6 +160,8 @@ static nn::global::Transformation doTransform = [](const nn::global::ParamMetrix
 	isOpen = true;
 
 	nn::global::ParamMetrix newSample = p;
+
+	stablize(newSample);
 
 	// Apply thinning
 	if (rng.getInt(0, 5) == 0) {
@@ -183,6 +191,25 @@ static nn::global::Transformation doTransform = [](const nn::global::ParamMetrix
 	return display.getValues();
 };
 
+static nn::global::Transformation finalEvaluate = [](const nn::global::ParamMetrix &p) {
+	static App display;
+	static bool isOpen = false;
+	if (!isOpen)
+		display.open();
+	isOpen = true;
+
+	nn::global::ParamMetrix newSample = p;
+
+	stablize(newSample);
+
+	// Apply movement
+	box gridBox = getBox(newSample);
+	addMovment(newSample, gridBox);
+
+	display.setValues(newSample);
+	return display.getValues();
+};
+
 int main(int argc, char *argv[]) {
 	nn::model::Model model("../ModelData/config.json");
 
@@ -199,7 +226,7 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	nn::model::modelResult result = model.evaluateModel("../ModelData/data");
+	nn::model::modelResult result = model.evaluateModel("../ModelData/data", finalEvaluate);
 	printf("prediction: %f\n", result.percentage);
 
 	App display;
