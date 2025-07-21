@@ -88,18 +88,17 @@ static void addMovment(nn::global::ParamMetrix &metrix, const box &gridBox) {
 	move(metrix, gridBox, horizotal, vertical);
 }
 
-constexpr float noiseStrength = 255.0f;  // Max noise offset
-constexpr float noiseProbability = 0.1f; // 5% chance to add noise
+constexpr float noiseStrength = 255.0f;
 
-static void addNoise(nn::global::ParamMetrix &metrix) {
+static void addNoise(nn::global::ParamMetrix &metrix, const float noiseLevel) {
 	static thread_local std::mt19937 gen(std::random_device{}());
 	std::uniform_real_distribution<float> noiseDist(-noiseStrength, noiseStrength);
 	std::uniform_real_distribution<float> chanceDist(0.0f, 1.0f);
 
 	for (float &val : metrix) {
-		if (chanceDist(gen) < noiseProbability) {
+		if (chanceDist(gen) < noiseLevel) {
 			val += noiseDist(gen);
-			val = std::clamp(val, 1.0f, 255.0f); // Keep valid range
+			val = std::clamp(val, 0.0f, 255.0f);
 		}
 	}
 }
@@ -107,6 +106,43 @@ static void addNoise(nn::global::ParamMetrix &metrix) {
 static void invert(nn::global::ParamMetrix &metrix) {
 	for (size_t i = 0; i < metrix.size(); ++i) {
 		metrix[i] = 255 - metrix[i];
+	}
+}
+
+static void thinWidth(nn::global::ParamMetrix &metrix) {
+	static thread_local nn::global::ParamMetrix temp(28 * 28, 0.0f);
+
+	// Factor: how much to thin (1.0 = no change, <1 = thinner)
+	const float shrinkFactor = 0.7f;
+	const int newWidth = std::max(1, static_cast<int>(28 * shrinkFactor));
+
+	// Clear temp
+	std::fill(temp.begin(), temp.end(), 0.0f);
+
+	for (int row = 0; row < 28; ++row) {
+		for (int col = 0; col < newWidth; ++col) {
+			// Map compressed col to original space
+			float origXf = (float)col / newWidth * 28.0f;
+			int x0 = static_cast<int>(origXf);
+			int x1 = std::min(x0 + 1, 27);
+			float weight = origXf - x0;
+
+			float pixel = (1.0f - weight) * metrix[row * 28 + x0] +
+			              weight * metrix[row * 28 + x1];
+
+			// Recenter compressed image on original canvas
+			int targetX = col + (28 - newWidth) / 2;
+			temp[row * 28 + targetX] = pixel;
+		}
+	}
+
+	std::swap(metrix, temp);
+}
+
+static void dimOpacity(nn::global::ParamMetrix &metrix) {
+	float alpha = 0.5f + (rng.getInt(0, 20) / 40.0f);
+	for (float &val : metrix) {
+		val *= alpha;
 	}
 }
 
@@ -119,18 +155,28 @@ static nn::global::Transformation doTransform = [](const nn::global::ParamMetrix
 
 	nn::global::ParamMetrix newSample = p;
 
+	// Apply thinning
+	if (rng.getInt(0, 5) == 0) {
+		thinWidth(newSample);
+	}
+
+	if (rng.getInt(0, 2) == 0) {
+		dimOpacity(newSample);
+	}
+
 	// Apply movement
 	box gridBox = getBox(newSample);
 	addMovment(newSample, gridBox);
 
 	// Apply noise
-	if (rng.getInt(0, 1) == 0) {
-		addNoise(newSample);
+	int noiseLevel = rng.getInt(-50, 50);
+	if (noiseLevel > 0) {
+		addNoise(newSample, noiseLevel / 100.f);
 	}
 
-	// Apply noise
+	// Apply invert
 	if (rng.getInt(0, 1) == 0) {
-        invert(newSample);
+		invert(newSample);
 	}
 
 	display.setValues(newSample);
