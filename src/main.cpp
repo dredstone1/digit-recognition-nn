@@ -98,14 +98,14 @@ static void addNoise(nn::global::ParamMetrix &metrix, const float noiseLevel) {
 	for (float &val : metrix) {
 		if (chanceDist(gen) < noiseLevel) {
 			val += noiseDist(gen);
-			val = std::clamp(val, 0.0f, 255.0f);
+			val = std::clamp(val, 0.0f, 1.f);
 		}
 	}
 }
 
 static void invert(nn::global::ParamMetrix &metrix) {
 	for (size_t i = 0; i < metrix.size(); ++i) {
-		metrix[i] = 255 - metrix[i];
+		metrix[i] = 1 - metrix[i];
 	}
 }
 

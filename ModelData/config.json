@@ -7,9 +7,9 @@
 		]
 	},
 	"training config": {
-		"batch size": 32,
+		"batch size": 64,
 		"batch count": 100000,
-		"learning rate": 0.001,
+		"learning rate": 0.005,
 		"auto save": {
 			"saveEvery": 100,
 			"dataFilenameAutoSave": "model.txt"
@@ -26,9 +26,10 @@
 			"output size": 10,
 			"output activation": 4,
 			"layers": [
-				{ "size": 258, "activationType": 1 },
+				{ "size": 256, "activationType": 1 },
 				{ "size": 128, "activationType": 1 },
-				{ "size": 64, "activationType": 1 }
+				{ "size": 64, "activationType": 1 },
+				{ "size": 32, "activationType": 1 }
 			]
 		}
 	]

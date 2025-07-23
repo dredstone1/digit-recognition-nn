@@ -64,8 +64,8 @@ void Painter::applyBrush() {
 	int mouseGridX = (mousePos.x - UI_GAP) / (CELL_SIZE + PIXEL_GAP);
 	int mouseGridY = (mousePos.y - UI_GAP) / (CELL_SIZE + PIXEL_GAP);
 
-	const float sigma = brushRadius * 0.5f;
-	const float maxStrength = 25.f;
+	const float sigma = std::max(1.f, brushRadius * 0.5f);
+	const float maxEffect = 0.1f; // ← Control how fast it paints; adjust as needed
 	const float radiusSquared = brushRadius * brushRadius;
 
 	for (int dy = -brushRadius; dy <= brushRadius; ++dy) {
@@ -76,19 +76,22 @@ void Painter::applyBrush() {
 			if (px >= 0 && px < GRID_SIZE && py >= 0 && py < GRID_SIZE) {
 				float distSquared = dx * dx + dy * dy;
 				if (distSquared <= radiusSquared) {
-					float strength = std::exp(-distSquared / (2 * sigma * sigma));
-					int index = py * GRID_SIZE + px;
+					float falloff = std::exp(-distSquared / (2 * sigma * sigma));
+					float delta = falloff * maxEffect;
 
+					int index = py * GRID_SIZE + px;
 					if (mouseActive == MouseMode::paint) {
-						values[index] = std::min(255.f, values[index] + strength * maxStrength) / 255;
+						values[index] = std::min(1.f, values[index] + delta);
 					} else {
-						values[index] = std::max(0.f, values[index] - strength * maxStrength) / 255;
+						values[index] = std::max(0.f, values[index] - delta);
 					}
 				}
 			}
 		}
 	}
 }
+
+
 
 void Painter::drawCanvas() {
 	sf::RectangleShape cell(sf::Vector2f(CELL_SIZE, CELL_SIZE));
