@@ -9,14 +9,17 @@
 	"training config": {
 		"batch size": 64,
 		"batch count": 100000,
-		"learning rate": 0.005,
 		"auto save": {
-			"saveEvery": 100,
+			"saveEvery": 1000,
 			"dataFilenameAutoSave": "model.txt"
 		},
 		"auto evaluating": {
 			"evaluateEvery": 100,
 			"dataBaseFilename": "../ModelData/data"
+		},
+		"optimizer": {
+			"type": "const",
+			"lr": 0.001
 		}
 	},
 	"network config": [

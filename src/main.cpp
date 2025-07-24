@@ -183,9 +183,9 @@ static nn::global::Transformation doTransform = [](const nn::global::ParamMetrix
 	}
 
 	// Apply invert
-	if (rng.getInt(0, 1) == 0) {
-		invert(newSample);
-	}
+	// if (rng.getInt(0, 1) == 0) {
+	// 	invert(newSample);
+	// }
 
 	display.setValues(newSample);
 	return display.getValues();
