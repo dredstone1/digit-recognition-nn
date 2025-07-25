@@ -88,17 +88,17 @@ static void addMovment(nn::global::ParamMetrix &metrix, const box &gridBox) {
 	move(metrix, gridBox, horizotal, vertical);
 }
 
-constexpr float noiseStrength = 255.0f;
-
-static void addNoise(nn::global::ParamMetrix &metrix, const float noiseLevel) {
+static void addNoise(nn::global::ParamMetrix &metrix) {
 	static thread_local std::mt19937 gen(std::random_device{}());
-	std::uniform_real_distribution<float> noiseDist(-noiseStrength, noiseStrength);
 	std::uniform_real_distribution<float> chanceDist(0.0f, 1.0f);
+	std::uniform_real_distribution<float> noiseDist(0.0f, 1.0f);
+
+	const float noiseLevel = 0.2f;
 
 	for (float &val : metrix) {
 		if (chanceDist(gen) < noiseLevel) {
 			val += noiseDist(gen);
-			val = std::clamp(val, 0.0f, 1.f);
+			val = std::min(val, 1.0f);
 		}
 	}
 }
@@ -164,9 +164,9 @@ static nn::global::Transformation doTransform = [](const nn::global::ParamMetrix
 	stablize(newSample);
 
 	// Apply thinning
-	if (rng.getInt(0, 5) == 0) {
-		thinWidth(newSample);
-	}
+	// if (rng.getInt(0, 5) == 0) {
+	// 	thinWidth(newSample);
+	// }
 
 	if (rng.getInt(0, 2) == 0) {
 		dimOpacity(newSample);
@@ -177,9 +177,9 @@ static nn::global::Transformation doTransform = [](const nn::global::ParamMetrix
 	addMovment(newSample, gridBox);
 
 	// Apply noise
-	int noiseLevel = rng.getInt(-50, 50);
-	if (noiseLevel > 0) {
-		addNoise(newSample, noiseLevel / 100.f);
+	int noiseLevel = rng.getInt(0, 1);
+	if (noiseLevel == 0) {
+		addNoise(newSample);
 	}
 
 	// Apply invert
