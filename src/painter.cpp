@@ -91,14 +91,12 @@ void Painter::applyBrush() {
 	}
 }
 
-
-
 void Painter::drawCanvas() {
 	sf::RectangleShape cell(sf::Vector2f(CELL_SIZE, CELL_SIZE));
 	int index = 0;
 
-	for (int y = 0; y < GRID_SIZE; ++y) {
-		for (int x = 0; x < GRID_SIZE; ++x) {
+	for (int x = 0; x < GRID_SIZE; ++x) {
+		for (int y = 0; y < GRID_SIZE; ++y) {
 			cell.setPosition({UI_GAP + x * (CELL_SIZE + PIXEL_GAP),
 			                  UI_GAP + y * (CELL_SIZE + PIXEL_GAP)});
 

@@ -168,19 +168,19 @@ static nn::global::Transformation doTransform = [](const nn::global::ParamMetrix
 	// 	thinWidth(newSample);
 	// }
 
-	if (rng.getInt(0, 2) == 0) {
-		dimOpacity(newSample);
-	}
+	// if (rng.getInt(0, 2) == 0) {
+	// 	dimOpacity(newSample);
+	// }
 
 	// Apply movement
 	box gridBox = getBox(newSample);
 	addMovment(newSample, gridBox);
 
 	// Apply noise
-	int noiseLevel = rng.getInt(0, 1);
-	if (noiseLevel == 0) {
-		addNoise(newSample);
-	}
+	// int noiseLevel = rng.getInt(0, 1);
+	// if (noiseLevel == 0) {
+	// 	addNoise(newSample);
+	// }
 
 	// Apply invert
 	// if (rng.getInt(0, 1) == 0) {
@@ -211,7 +211,7 @@ static nn::global::Transformation finalEvaluate = [](const nn::global::ParamMetr
 };
 
 int main(int argc, char *argv[]) {
-	nn::model::Model model("../ModelData/config.json");
+	nn::model::Model model("../ModelData/emnist_config.json");
 
 	for (int i = 1; i < argc; ++i) {
 		std::string arg = argv[i];
@@ -223,10 +223,17 @@ int main(int argc, char *argv[]) {
 			std::cout << "training command\n";
 			model.train("../ModelData/data1", doTransform);
 			model.save("model.txt");
+		} else if (arg == "-L") {
+			std::cout << "loading command emnist\n";
+			model.load("emnist_model.txt");
+		} else if (arg == "-T") {
+			std::cout << "training command emnist\n";
+			model.train("../ModelData/emnist_train_data", doTransform);
+			model.save("emnist_model.txt");
 		}
 	}
 
-	nn::model::modelResult result = model.evaluateModel("../ModelData/train_data", finalEvaluate);
+	nn::model::modelResult result = model.evaluateModel("../ModelData/emnist_test_data.nndb", finalEvaluate);
 	printf("prediction: %f\n", result.percentage);
 
 	App display;
