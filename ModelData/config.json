@@ -1,5 +1,6 @@
 {
 	"visual config": {
+        "enableVisuals": true,
 		"modes": [
 			{ "state": "pause", "mode": true },
 			{ "state": "precise mode", "mode": false },
@@ -15,7 +16,7 @@
 		},
 		"auto evaluating": {
 			"evaluateEvery": 500,
-			"dataBaseFilename": "../ModelData/data"
+			"dataBaseFilename": "../ModelData/test_data"
 		},
 		"optimizer": {
 			"type": "const",

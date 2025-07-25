@@ -226,7 +226,7 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	nn::model::modelResult result = model.evaluateModel("../ModelData/data", finalEvaluate);
+	nn::model::modelResult result = model.evaluateModel("../ModelData/train_data", finalEvaluate);
 	printf("prediction: %f\n", result.percentage);
 
 	App display;
