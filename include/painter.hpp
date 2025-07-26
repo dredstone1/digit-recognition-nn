@@ -40,6 +40,8 @@ class Painter {
 
 	int brushRadius = 1;
 
+    bool windowResize{false};
+
 	MouseMode mouseActive{MouseMode::none};
 
 	void reset();
@@ -49,6 +51,8 @@ class Painter {
 
 	void drawCanvas();
 	void applyBrush();
+
+    void resetSize();
 
   public:
 	Painter();
