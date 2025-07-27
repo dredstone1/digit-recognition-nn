@@ -10,8 +10,6 @@ FetchContent_Declare(SFML
     GIT_REPOSITORY https://github.com/SFML/SFML.git
     GIT_TAG 3.0.1
     GIT_SHALLOW ON
-    SYSTEM
-    EXCLUDE_FROM_ALL
 )
 
 FetchContent_Declare(NeuralNetwork
@@ -38,22 +36,31 @@ target_include_directories(digit_nn
 
 target_link_libraries(digit_nn
     PUBLIC
-        SFML::Graphics
-        SFML::Window
-        SFML::System
+        sfml-graphics
+        sfml-window
+        sfml-system
         NeuralNetwork
 )
 
-add_executable(digit-recognition-nn src/main.cpp)
+add_executable(digit-nn src/digit_recognition.cpp)
+add_executable(abc-digit-nn src/abc_digit_recognition.cpp)
 
-target_link_libraries(digit-recognition-nn
+target_link_libraries(digit-nn
     PRIVATE
         digit_nn
-        SFML::Graphics
-        SFML::Window
-        SFML::System
+        sfml-graphics
+        sfml-window
+        sfml-system
         NeuralNetwork
 )
 
-message(STATUS "Configured digit-recognition-nn executable")
+target_link_libraries(abc-digit-nn
+    PRIVATE
+        digit_nn
+        sfml-graphics
+        sfml-window
+        sfml-system
+        NeuralNetwork
+)
 
+message(STATUS "Configured image-recognition-nn executable")
