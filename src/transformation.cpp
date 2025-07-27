@@ -1,4 +1,4 @@
-#include "transformation.hpp"
+#include "../include/transformation.hpp"
 namespace tr {
 int RandomGenerator::getInt(int start, int end) {
 	std::uniform_int_distribution<> dist(start, end);
@@ -37,7 +37,7 @@ box getBox(const nn::global::ParamMetrix &metrix) {
 	    max_y - min_y + 1};
 }
 
-void move(nn::global::ParamMetrix &metrix, const box &bound, const int h, const int v) {
+ void move(nn::global::ParamMetrix &metrix, const box &bound, const int h, const int v) {
 	static thread_local nn::global::ParamMetrix temp(28 * 28);
 	std::fill(temp.begin(), temp.end(), 0.0f);
 
@@ -58,7 +58,7 @@ void move(nn::global::ParamMetrix &metrix, const box &bound, const int h, const 
 	std::swap(metrix, temp);
 }
 
-void addMovment(nn::global::ParamMetrix &metrix, const box &gridBox) {
+ void addMovment(nn::global::ParamMetrix &metrix, const box &gridBox) {
 	int up = gridBox.y;
 	int down = 28 - (gridBox.y + gridBox.height);
 	int left = gridBox.x;
@@ -70,7 +70,7 @@ void addMovment(nn::global::ParamMetrix &metrix, const box &gridBox) {
 	move(metrix, gridBox, horizotal, vertical);
 }
 
-void stablize(nn::global::ParamMetrix &metrix) {
+ void stablize(nn::global::ParamMetrix &metrix) {
 	for (auto &value : metrix) {
 		value /= 255;
 	}
