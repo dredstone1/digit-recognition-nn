@@ -16,7 +16,7 @@
 		},
 		"auto evaluating": {
 			"evaluateEvery": 1000,
-			"dataBaseFilename": "../ModelData/emnist_test_data"
+			"dataBaseFilename": "../ModelData/emnist_balanced_test_data"
 		},
 		"optimizer": {
 			"type": "const",
@@ -27,12 +27,12 @@
 		{
 			"type": "FNN",
 			"input size": 784,
-			"output size": 62,
+			"output size": 47,
 			"output activation": 4,
 			"layers": [
-				{ "size": 256, "dropoutRate": 0.15, "activationType": 1 },
-				{ "size": 128, "dropoutRate": 0.1, "activationType": 1 },
-				{ "size": 64, "dropoutRate": 0.05, "activationType": 1 }
+				{ "size": 256, "dropoutRate": 0, "activationType": 1 },
+				{ "size": 128, "dropoutRate": 0, "activationType": 1 },
+				{ "size": 64, "dropoutRate": 0, "activationType": 1 }
 			]
 		}
 	]
