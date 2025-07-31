@@ -78,7 +78,7 @@ void Painter::applyBrush() {
 	int mouseGridY = (mousePos.y - UI_GAP) / (CELL_SIZE + PIXEL_GAP);
 
 	const float sigma = std::max(1.f, brushRadius * 0.5f);
-	const float maxEffect = 0.1f;
+	const float maxEffect = 0.05f;
 	const float radiusSquared = brushRadius * brushRadius;
 
 	for (int dy = -brushRadius; dy <= brushRadius; ++dy) {

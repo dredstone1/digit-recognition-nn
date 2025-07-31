@@ -1,6 +1,5 @@
 #include "../include/painter.hpp"
 #include "../include/transformation.hpp"
-#include "Globals.hpp"
 #include <iostream>
 #include <model.hpp>
 
@@ -15,9 +14,8 @@ static nn::global::Transformation doTransform = [](const nn::global::ParamMetrix
 
 	tr::stablize(newSample);
 
-	// Apply movement
 	tr::box gridBox = tr::getBox(newSample);
-	tr::addMovment(newSample, gridBox);
+	tr::addMovement(newSample, gridBox, 3);
 
 	display.setValues(newSample);
 	return display.getValues();
@@ -34,9 +32,8 @@ static nn::global::Transformation finalEvaluate = [](const nn::global::ParamMetr
 
 	tr::stablize(newSample);
 
-	// Apply movement
 	tr::box gridBox = tr::getBox(newSample);
-	tr::addMovment(newSample, gridBox);
+	tr::addMovement(newSample, gridBox);
 
 	display.setValues(newSample);
 	return display.getValues();

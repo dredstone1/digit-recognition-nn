@@ -18,7 +18,7 @@ static nn::global::Transformation doTransform = [](const nn::global::ParamMetrix
 
 	// Apply movement
 	tr::box gridBox = tr::getBox(newSample);
-	addMovment(newSample, gridBox);
+	addMovement(newSample, gridBox);
 
 	display.setValues(newSample);
 	return display.getValues();
@@ -37,7 +37,7 @@ static nn::global::Transformation finalEvaluate = [](const nn::global::ParamMetr
 
 	// Apply movement
 	tr::box gridBox = tr::getBox(newSample);
-	addMovment(newSample, gridBox);
+	addMovement(newSample, gridBox);
 
 	display.setValues(newSample);
 	return display.getValues();
