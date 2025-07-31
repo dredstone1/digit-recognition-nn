@@ -3,9 +3,10 @@
 #include <iostream>
 #include <model.hpp>
 
+static App display;
+static bool isOpen = false;
+
 static nn::global::Transformation doTransform = [](const nn::global::ParamMetrix &p) {
-	static App display;
-	static bool isOpen = false;
 	if (!isOpen)
 		display.open();
 	isOpen = true;
@@ -22,8 +23,6 @@ static nn::global::Transformation doTransform = [](const nn::global::ParamMetrix
 };
 
 static nn::global::Transformation finalEvaluate = [](const nn::global::ParamMetrix &p) {
-	static App display;
-	static bool isOpen = false;
 	if (!isOpen)
 		display.open();
 	isOpen = true;
@@ -58,16 +57,16 @@ int main(int argc, char *argv[]) {
 			model.load("emnist_model.txt");
 		} else if (arg == "-t") {
 			std::cout << "training command emnist\n";
-			model.train("../ModelData/emnist_balanced_train_data", doTransform);
+			model.train("../ModelData/emnist_balanced_train_data", doTransform, finalEvaluate);
 			model.save("emnist_model.txt");
 		}
 	}
 
 	nn::model::modelResult result = model.evaluateModel("../ModelData/emnist_balanced_test_data", finalEvaluate);
 	printf("prediction: %f\n", result.percentage);
-
-	App display;
-	display.open();
+	if (!isOpen)
+		display.open();
+	isOpen = true;
 
 	while (display.isOpen()) {
 		display.wait();
