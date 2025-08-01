@@ -59,7 +59,6 @@ int main(int argc, char *argv[]) {
 		} else if (arg == "-t") {
 			std::cout << "training command emnist\n";
 			std::vector<std::string> files{
-			    "../ModelData/emnist_byMerge_train_data",
 			    "../ModelData/emnist_balanced_train_data"};
 
 			model.train(files, doTransform, finalEvaluate);
