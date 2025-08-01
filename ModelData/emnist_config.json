@@ -8,19 +8,19 @@
 		]
 	},
 	"training config": {
-		"batch size": 32,
-		"batch count": 100000,
+		"batch size": 128,
+		"batch count": 1000,
 		"auto save": {
-			"saveEvery": 1000,
+			"saveEvery": 100,
 			"dataFilenameAutoSave": "emnist_model.txt"
 		},
 		"auto evaluating": {
-			"evaluateEvery": 1000,
+			"evaluateEvery": 10,
 			"dataBaseFilename": "../ModelData/emnist_balanced_test_data"
 		},
 		"optimizer": {
 			"type": "const",
-			"lr": 0.0005
+			"lr": 0.0001
 		}
 	},
 	"network config": [
@@ -30,9 +30,9 @@
 			"output size": 47,
 			"output activation": 4,
 			"layers": [
+				{ "size": 512, "dropoutRate": 0, "activationType": 1 },
 				{ "size": 256, "dropoutRate": 0, "activationType": 1 },
-				{ "size": 128, "dropoutRate": 0, "activationType": 1 },
-				{ "size": 64, "dropoutRate": 0, "activationType": 1 }
+				{ "size": 128, "dropoutRate": 0, "activationType": 1 }
 			]
 		}
 	]

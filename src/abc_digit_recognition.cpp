@@ -2,6 +2,7 @@
 #include "../include/transformation.hpp"
 #include <iostream>
 #include <model.hpp>
+#include <vector>
 
 static App display;
 static bool isOpen = false;
@@ -57,7 +58,11 @@ int main(int argc, char *argv[]) {
 			model.load("emnist_model.txt");
 		} else if (arg == "-t") {
 			std::cout << "training command emnist\n";
-			model.train("../ModelData/emnist_balanced_train_data", doTransform, finalEvaluate);
+			std::vector<std::string> files{
+			    "../ModelData/emnist_byMerge_train_data",
+			    "../ModelData/emnist_balanced_train_data"};
+
+			model.train(files, doTransform, finalEvaluate);
 			model.save("emnist_model.txt");
 		}
 	}
