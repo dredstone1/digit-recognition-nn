@@ -8,38 +8,27 @@
 		]
 	},
 	"training config": {
-		"batch size": 256,
+		"batch size": 100,
 		"batch count": 1000,
 		"auto save": {
 			"saveEvery": 100,
 			"dataFilenameAutoSave": "emnist_model.txt"
 		},
-		"auto evaluating": {
-			"evaluateEvery": 10,
-			"dataBaseFilename": "../ModelData/emnist_balanced_test_data"
-		},
 		"optimizer": {
 			"type": "const",
-			"lr": 0.1
+			"lr": 0.5
 		}
 	},
 	"network config": [
-		{
-			"type": "CNN",
-			"input size": 784,
-			"output size": 784,
-			"output activation": 1
-		},
 		{
 			"type": "FNN",
 			"input size": 784,
 			"output size": 47,
 			"output activation": 4,
 			"layers": [
-				{ "size": 256, "dropoutRate": 0, "activationType": 1 },
-				{ "size": 128, "dropoutRate": 0, "activationType": 1 },
-				{ "size": 64, "dropoutRate": 0, "activationType": 1 },
-				{ "size": 32, "dropoutRate": 0, "activationType": 1 }
+				{ "size": 200, "activationType": 1 },
+				{ "size": 60, "activationType": 1 },
+				{ "size": 20, "activationType": 1 }
 			]
 		}
 	]

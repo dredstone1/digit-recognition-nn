@@ -1,5 +1,7 @@
 #include "../include/painter.hpp"
 #include "../include/transformation.hpp"
+#include "tensor.hpp"
+#include <cstddef>
 #include <iostream>
 #include <model.hpp>
 #include <vector>
@@ -7,36 +9,36 @@
 static App display;
 static bool isOpen = false;
 
-static nn::global::Transformation doTransform = [](const nn::global::ParamMetrix &p) {
+static nn::global::Transformation doTransform = [](const nn::global::Tensor &p) {
 	if (!isOpen)
 		display.open();
 	isOpen = true;
 
-	nn::global::ParamMetrix newSample = p;
+	nn::global::Tensor newSample = p;
 
 	tr::stablize(newSample);
 
 	tr::box gridBox = tr::getBox(newSample);
 	tr::addMovement(newSample, gridBox, 3);
 
-	display.setValues(newSample);
-	return display.getValues();
+	display.setValues(newSample.getData());
+	return newSample;
 };
 
-static nn::global::Transformation finalEvaluate = [](const nn::global::ParamMetrix &p) {
+static nn::global::Transformation finalEvaluate = [](const nn::global::Tensor &p) {
 	if (!isOpen)
 		display.open();
 	isOpen = true;
 
-	nn::global::ParamMetrix newSample = p;
+	nn::global::Tensor newSample = p;
 
 	tr::stablize(newSample);
 
 	tr::box gridBox = tr::getBox(newSample);
 	tr::addMovement(newSample, gridBox);
 
-	display.setValues(newSample);
-	return display.getValues();
+	display.setValues(newSample.getData());
+	return newSample;
 };
 
 const int EMNIST_BALANCED_MAP[47] = {
@@ -74,7 +76,12 @@ int main(int argc, char *argv[]) {
 
 	while (display.isOpen()) {
 		display.wait();
-		model.runModel(display.getValues());
+        nn::global::Tensor metrix({784});
+        for (size_t i = 0; i < metrix.numElements(); ++i) {
+            metrix({i}) = display.getValues()[i];
+        }
+
+		model.runModel(metrix);
 		nn::global::Prediction pre = model.getPrediction();
 
 		char character = (pre.index < 47) ? static_cast<char>(EMNIST_BALANCED_MAP[pre.index]) : '?';

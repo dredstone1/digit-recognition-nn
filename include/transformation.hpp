@@ -1,4 +1,4 @@
-#include "Globals.hpp"
+#include <tensor.hpp>
 #include <random>
 
 namespace tr {
@@ -20,14 +20,14 @@ struct box {
 	int height;
 };
 
-box getBox(const nn::global::ParamMetrix &metrix);
+box getBox(const nn::global::Tensor &metrix);
 void shrinkBoxBound(box &boxData, const int a);
 
-void clearOutsideBox(nn::global::ParamMetrix &metrix, const box &bound);
+void clearOutsideBox(nn::global::Tensor &metrix, const box &bound);
 
-void move(nn::global::ParamMetrix &metrix, const box &bound, const int h, const int v);
+void move(nn::global::Tensor &metrix, const box &bound, const int h, const int v);
 
-void addMovement(nn::global::ParamMetrix &metrix,  box &gridBox, int shift = 0);
-void stablize(nn::global::ParamMetrix &metrix);
+void addMovement(nn::global::Tensor &metrix,  box &gridBox, int shift = 0);
+void stablize(nn::global::Tensor &metrix);
 
 } // namespace tr

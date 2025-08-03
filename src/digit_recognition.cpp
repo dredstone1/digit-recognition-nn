@@ -1,18 +1,19 @@
 #include "../include/painter.hpp"
 #include "../include/transformation.hpp"
+#include "tensor.hpp"
 #include <Globals.hpp>
 #include <iostream>
 #include <model.hpp>
 #include <ostream>
 
-static nn::global::Transformation doTransform = [](const nn::global::ParamMetrix &p) {
+static nn::global::Transformation doTransform = [](const nn::global::Tensor &p) {
 	static App display;
 	static bool isOpen = false;
 	if (!isOpen)
 		display.open();
 	isOpen = true;
 
-	nn::global::ParamMetrix newSample = p;
+	nn::global::Tensor newSample = p;
 
 	tr::stablize(newSample);
 
@@ -20,18 +21,18 @@ static nn::global::Transformation doTransform = [](const nn::global::ParamMetrix
 	tr::box gridBox = tr::getBox(newSample);
 	addMovement(newSample, gridBox);
 
-	display.setValues(newSample);
-	return display.getValues();
+	display.setValues(newSample.getData());
+	return newSample;
 };
 
-static nn::global::Transformation finalEvaluate = [](const nn::global::ParamMetrix &p) {
+static nn::global::Transformation finalEvaluate = [](const nn::global::Tensor &p) {
 	static App display;
 	static bool isOpen = false;
 	if (!isOpen)
 		display.open();
 	isOpen = true;
 
-	nn::global::ParamMetrix newSample = p;
+	nn::global::Tensor newSample = p;
 
 	tr::stablize(newSample);
 
@@ -39,8 +40,8 @@ static nn::global::Transformation finalEvaluate = [](const nn::global::ParamMetr
 	tr::box gridBox = tr::getBox(newSample);
 	addMovement(newSample, gridBox);
 
-	display.setValues(newSample);
-	return display.getValues();
+	display.setValues(newSample.getData());
+	return newSample;
 };
 
 int main(int argc, char *argv[]) {
@@ -67,7 +68,12 @@ int main(int argc, char *argv[]) {
 
 	while (display.isOpen()) {
 		display.wait();
-		model.runModel(display.getValues());
+		nn::global::Tensor metrix({784});
+		for (size_t i = 0; i < metrix.numElements(); ++i) {
+			metrix({i}) = display.getValues()[i];
+		}
+
+		model.runModel(metrix);
 		nn::global::Prediction pre = model.getPrediction();
 
 		std::cout << "prediction: " << pre.index << ", " << pre.value << std::endl;
