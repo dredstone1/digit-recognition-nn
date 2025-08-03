@@ -78,7 +78,7 @@ int main(int argc, char *argv[]) {
 		display.wait();
         nn::global::Tensor metrix({784});
         for (size_t i = 0; i < metrix.numElements(); ++i) {
-            metrix({i}) = display.getValues()[i];
+            metrix[i] = display.getValues()[i];
         }
 
 		model.runModel(metrix);
