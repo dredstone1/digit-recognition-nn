@@ -19,14 +19,14 @@ box getBox(const nn::global::Tensor &metrix) {
 	int max_x = -1, max_y = -1;
 
 	for (size_t i = 0; i < 784; ++i) {
-		if (metrix({i}) > 0) {
-			int row = i / 28;
-			int col = i % 28;
-			min_x = std::min(min_x, col);
-			max_x = std::max(max_x, col);
-			min_y = std::min(min_y, row);
-			max_y = std::max(max_y, row);
-		}
+		// if (metrix({i}) > 0) {
+		// 	int row = i / 28;
+		// 	int col = i % 28;
+		// 	min_x = std::min(min_x, col);
+		// 	max_x = std::max(max_x, col);
+		// 	min_y = std::min(min_y, row);
+		// 	max_y = std::max(max_y, row);
+		// }
 	}
 
 	if (max_x == -1 || max_y == -1) {
@@ -45,7 +45,7 @@ void clearOutsideBox(nn::global::Tensor &metrix, const box &bound) {
 		for (int x = 0; x < 28; ++x) {
 			if (x < bound.x || x >= bound.x + bound.width ||
 			    y < bound.y || y >= bound.y + bound.height) {
-				metrix({(size_t)y * 28 + x}) = 0.0f;
+				// metrix({(size_t)y * 28 + x}) = 0.0f;
 			}
 		}
 	}
@@ -65,7 +65,7 @@ void shrinkBoxBound(box &boxData, const int a) {
 
 void move(nn::global::Tensor &metrix, const box &bound, const int h, const int v) {
 	static nn::global::Tensor temp({28 * 28});
-	std::fill(temp.begin(), temp.end(), 0.0f);
+	// std::fill(temp.begin(), temp.end(), 0.0f);
 
 	for (int y = 0; y < bound.height; ++y) {
 		for (int x = 0; x < bound.width; ++x) {
@@ -76,7 +76,7 @@ void move(nn::global::Tensor &metrix, const box &bound, const int h, const int v
 			int dst_y = src_y + v;
 
 			if (dst_x >= 0 && dst_x < 28 && dst_y >= 0 && dst_y < 28) {
-				temp({(size_t)dst_y * 28 + dst_x}) = metrix({(size_t)src_y * 28 + src_x});
+				// temp({(size_t)dst_y * 28 + dst_x}) = metrix({(size_t)src_y * 28 + src_x});
 			}
 		}
 	}

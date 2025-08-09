@@ -21,7 +21,7 @@ static nn::global::Transformation doTransform = [](const nn::global::Tensor &p) 
 	tr::box gridBox = tr::getBox(newSample);
 	addMovement(newSample, gridBox);
 
-	display.setValues(newSample.getData());
+	// display.setValues(newSample.getData());
 	return newSample;
 };
 
@@ -40,7 +40,7 @@ static nn::global::Transformation finalEvaluate = [](const nn::global::Tensor &p
 	tr::box gridBox = tr::getBox(newSample);
 	addMovement(newSample, gridBox);
 
-	display.setValues(newSample.getData());
+	// display.setValues(newSample.getData());
 	return newSample;
 };
 
@@ -69,9 +69,7 @@ int main(int argc, char *argv[]) {
 	while (display.isOpen()) {
 		display.wait();
 		nn::global::Tensor metrix({784});
-		for (size_t i = 0; i < metrix.numElements(); ++i) {
-			metrix({i}) = display.getValues()[i];
-		}
+        metrix = display.getValues();
 
 		model.runModel(metrix);
 		nn::global::Prediction pre = model.getPrediction();

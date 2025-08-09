@@ -1,7 +1,6 @@
 #include "../include/painter.hpp"
 #include "../include/transformation.hpp"
 #include "tensor.hpp"
-#include <cstddef>
 #include <iostream>
 #include <model.hpp>
 #include <vector>
@@ -21,7 +20,7 @@ static nn::global::Transformation doTransform = [](const nn::global::Tensor &p) 
 	tr::box gridBox = tr::getBox(newSample);
 	tr::addMovement(newSample, gridBox, 3);
 
-	display.setValues(newSample.getData());
+	// display.setValues(()newSample.getData());
 	return newSample;
 };
 
@@ -37,7 +36,7 @@ static nn::global::Transformation finalEvaluate = [](const nn::global::Tensor &p
 	tr::box gridBox = tr::getBox(newSample);
 	tr::addMovement(newSample, gridBox);
 
-	display.setValues(newSample.getData());
+	// display.setValues(newSample.getData());
 	return newSample;
 };
 
@@ -50,6 +49,7 @@ const int EMNIST_BALANCED_MAP[47] = {
 };
 
 int main(int argc, char *argv[]) {
+	nn::global::Tensor::toGpu();
 	nn::model::Model model("../ModelData/emnist_config.json");
 
 	for (int i = 1; i < argc; ++i) {
@@ -63,7 +63,7 @@ int main(int argc, char *argv[]) {
 			std::vector<std::string> files{
 			    "../ModelData/emnist_balanced_train_data"};
 
-			model.train(files, doTransform, finalEvaluate);
+			model.train(files);
 			model.save("emnist_model.txt");
 		}
 	}
@@ -76,10 +76,8 @@ int main(int argc, char *argv[]) {
 
 	while (display.isOpen()) {
 		display.wait();
-        nn::global::Tensor metrix({784});
-        for (size_t i = 0; i < metrix.numElements(); ++i) {
-            metrix[i] = display.getValues()[i];
-        }
+		nn::global::Tensor metrix({784});
+        metrix = display.getValues();
 
 		model.runModel(metrix);
 		nn::global::Prediction pre = model.getPrediction();

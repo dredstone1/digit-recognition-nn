@@ -8,8 +8,8 @@
 		]
 	},
 	"training config": {
-		"batch size": 100,
-		"batch count": 1000,
+		"batch size": 1000,
+		"batch count": 100,
 		"auto save": {
 			"saveEvery": 100,
 			"dataFilenameAutoSave": "emnist_model.txt"
@@ -26,9 +26,10 @@
 			"output size": 47,
 			"output activation": 4,
 			"layers": [
-				{ "size": 200, "activationType": 1 },
-				{ "size": 60, "activationType": 1 },
-				{ "size": 20, "activationType": 1 }
+				{ "size": 512, "activationType": 1 },
+				{ "size": 256, "activationType": 1 },
+				{ "size": 128, "activationType": 1 },
+				{ "size": 64, "activationType": 1 }
 			]
 		}
 	]
