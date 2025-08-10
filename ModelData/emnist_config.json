@@ -1,6 +1,7 @@
 {
 	"visual config": {
 		"enableVisuals": true,
+		"enableNetwrokVisual": false,
 		"modes": [
 			{ "state": "pause", "mode": true },
 			{ "state": "precise mode", "mode": false },
@@ -8,10 +9,10 @@
 		]
 	},
 	"training config": {
-		"batch size": 1000,
+		"batch size": 100000,
 		"batch count": 100,
 		"auto save": {
-			"saveEvery": 100,
+			"saveEvery": 1000,
 			"dataFilenameAutoSave": "emnist_model.txt"
 		},
 		"optimizer": {

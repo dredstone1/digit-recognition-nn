@@ -51,7 +51,6 @@ target_link_libraries(digit-nn
         sfml-graphics
         sfml-window
         sfml-system
-        NeuralNetwork
 )
 
 target_link_libraries(abc-digit-nn
@@ -60,7 +59,6 @@ target_link_libraries(abc-digit-nn
         sfml-graphics
         sfml-window
         sfml-system
-        NeuralNetwork
 )
 
 message(STATUS "Configured image-recognition-nn executable")

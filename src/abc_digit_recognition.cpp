@@ -1,9 +1,7 @@
 #include "../include/painter.hpp"
 #include "../include/transformation.hpp"
-#include "tensor.hpp"
 #include <iostream>
 #include <model.hpp>
-#include <vector>
 
 static App display;
 static bool isOpen = false;
@@ -17,8 +15,8 @@ static nn::global::Transformation doTransform = [](const nn::global::Tensor &p) 
 
 	tr::stablize(newSample);
 
-	tr::box gridBox = tr::getBox(newSample);
-	tr::addMovement(newSample, gridBox, 3);
+	// tr::box gridBox = tr::getBox(newSample);
+	// tr::addMovement(newSample, gridBox, 3);
 
 	// display.setValues(()newSample.getData());
 	return newSample;
@@ -33,8 +31,8 @@ static nn::global::Transformation finalEvaluate = [](const nn::global::Tensor &p
 
 	tr::stablize(newSample);
 
-	tr::box gridBox = tr::getBox(newSample);
-	tr::addMovement(newSample, gridBox);
+	// tr::box gridBox = tr::getBox(newSample);
+	// tr::addMovement(newSample, gridBox);
 
 	// display.setValues(newSample.getData());
 	return newSample;
@@ -63,7 +61,7 @@ int main(int argc, char *argv[]) {
 			std::vector<std::string> files{
 			    "../ModelData/emnist_balanced_train_data"};
 
-			model.train(files);
+			model.train(files, doTransform, finalEvaluate);
 			model.save("emnist_model.txt");
 		}
 	}
