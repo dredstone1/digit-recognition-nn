@@ -9,8 +9,8 @@
 		]
 	},
 	"training config": {
-		"batch size": 100000,
-		"batch count": 100,
+		"batch size": 100,
+		"batch count": 100000,
 		"auto save": {
 			"saveEvery": 1000,
 			"dataFilenameAutoSave": "emnist_model.txt"

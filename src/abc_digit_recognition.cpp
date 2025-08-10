@@ -7,34 +7,22 @@ static App display;
 static bool isOpen = false;
 
 static nn::global::Transformation doTransform = [](const nn::global::Tensor &p) {
-	if (!isOpen)
-		display.open();
-	isOpen = true;
-
 	nn::global::Tensor newSample = p;
 
 	tr::stablize(newSample);
 
 	// tr::box gridBox = tr::getBox(newSample);
 	// tr::addMovement(newSample, gridBox, 3);
-
-	// display.setValues(()newSample.getData());
 	return newSample;
 };
 
 static nn::global::Transformation finalEvaluate = [](const nn::global::Tensor &p) {
-	if (!isOpen)
-		display.open();
-	isOpen = true;
-
 	nn::global::Tensor newSample = p;
 
 	tr::stablize(newSample);
 
 	// tr::box gridBox = tr::getBox(newSample);
 	// tr::addMovement(newSample, gridBox);
-
-	// display.setValues(newSample.getData());
 	return newSample;
 };
 
@@ -75,7 +63,7 @@ int main(int argc, char *argv[]) {
 	while (display.isOpen()) {
 		display.wait();
 		nn::global::Tensor metrix({784});
-        metrix = display.getValues();
+		metrix = display.getValues();
 
 		model.runModel(metrix);
 		nn::global::Prediction pre = model.getPrediction();
