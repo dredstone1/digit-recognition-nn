@@ -10,14 +10,18 @@
 	},
 	"training config": {
 		"batch size": 100,
-		"batch count": 100000,
+		"batch count": 10000,
 		"auto save": {
 			"saveEvery": 1000,
 			"dataFilenameAutoSave": "emnist_model.txt"
 		},
+		"auto evaluating": {
+			"evaluateEvery": 1000,
+			"dataBaseFilename": "../ModelData/Pemnist_balanced_test_data"
+		},
 		"optimizer": {
 			"type": "const",
-			"lr": 0.5
+			"lr": 0.1
 		}
 	},
 	"network config": [
@@ -30,7 +34,10 @@
 				{ "size": 512, "activationType": 1 },
 				{ "size": 256, "activationType": 1 },
 				{ "size": 128, "activationType": 1 },
-				{ "size": 64, "activationType": 1 }
+				{ "size": 64, "activationType": 1 },
+				{ "size": 32, "activationType": 1 },
+				{ "size": 16, "activationType": 1 },
+				{ "size": 32, "activationType": 1 }
 			]
 		}
 	]

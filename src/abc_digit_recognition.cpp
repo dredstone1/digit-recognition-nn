@@ -47,14 +47,15 @@ int main(int argc, char *argv[]) {
 		} else if (arg == "-t") {
 			std::cout << "training command emnist\n";
 			std::vector<std::string> files{
-			    "../ModelData/emnist_balanced_train_data"};
+			    "../ModelData/Pemnist_balanced_train_data",
+			};
 
-			model.train(files, doTransform, finalEvaluate);
+			model.train(files);
 			model.save("emnist_model.txt");
 		}
 	}
 
-	nn::model::modelResult result = model.evaluateModel("../ModelData/emnist_balanced_test_data", finalEvaluate);
+	nn::model::modelResult result = model.evaluateModel("../ModelData/Pemnist_balanced_test_data");
 	printf("prediction: %f\n", result.percentage);
 	if (!isOpen)
 		display.open();
