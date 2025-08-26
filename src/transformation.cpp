@@ -19,14 +19,14 @@ box getBox(const nn::global::Tensor &metrix) {
 	int max_x = -1, max_y = -1;
 
 	for (size_t i = 0; i < 784; ++i) {
-		// if (metrix({i}) > 0) {
-		// 	int row = i / 28;
-		// 	int col = i % 28;
-		// 	min_x = std::min(min_x, col);
-		// 	max_x = std::max(max_x, col);
-		// 	min_y = std::min(min_y, row);
-		// 	max_y = std::max(max_y, row);
-		// }
+		if (metrix.getValue({i}) > 0) {
+			int row = i / 28;
+			int col = i % 28;
+			min_x = std::min(min_x, col);
+			max_x = std::max(max_x, col);
+			min_y = std::min(min_y, row);
+			max_y = std::max(max_y, row);
+		}
 	}
 
 	if (max_x == -1 || max_y == -1) {
@@ -65,7 +65,7 @@ void shrinkBoxBound(box &boxData, const int a) {
 
 void move(nn::global::Tensor &metrix, const box &bound, const int h, const int v) {
 	static nn::global::Tensor temp({28 * 28});
-	// std::fill(temp.begin(), temp.end(), 0.0f);
+    temp.fill(0);
 
 	for (int y = 0; y < bound.height; ++y) {
 		for (int x = 0; x < bound.width; ++x) {
@@ -76,7 +76,7 @@ void move(nn::global::Tensor &metrix, const box &bound, const int h, const int v
 			int dst_y = src_y + v;
 
 			if (dst_x >= 0 && dst_x < 28 && dst_y >= 0 && dst_y < 28) {
-				// temp({(size_t)dst_y * 28 + dst_x}) = metrix({(size_t)src_y * 28 + src_x});
+				temp.setValue({(size_t)dst_y * 28 + dst_x}, metrix.getValue({(size_t)src_y * 28 + src_x}));
 			}
 		}
 	}
@@ -85,10 +85,10 @@ void move(nn::global::Tensor &metrix, const box &bound, const int h, const int v
 }
 
 void addMovement(nn::global::Tensor &metrix, box &gridBox, int shift) {
-	int up3 = gridBox.y + shift;
-	int down3 = 28 - (gridBox.y + gridBox.height) + shift;
+	int up3 = gridBox.y;
+	int down3 = 28 - (gridBox.y + gridBox.height);
 	int left3 = gridBox.x + shift;
-	int right3 = 28 - (gridBox.x + gridBox.width) + shift;
+	int right3 = 28 - (gridBox.x + gridBox.width);
 
 	int horizontal = getAction(-left3, right3);
 	int vertical = getAction(-up3, down3);

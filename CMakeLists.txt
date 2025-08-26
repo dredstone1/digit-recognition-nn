@@ -1,9 +1,14 @@
 cmake_minimum_required(VERSION 3.28)
-project(digit-recognition-nn LANGUAGES CXX)
+set(CMAKE_CUDA_ARCHITECTURES 86)  # For RTX 3060
+
+project(digit-recognition-nn LANGUAGES CXX CUDA)
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CUDA_STANDARD 17)                    # Add CUDA standard
+set(CMAKE_CUDA_STANDARD_REQUIRED ON)           # Enforce it
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+enable_language(CUDA)
 include(FetchContent)
 
 FetchContent_Declare(SFML
@@ -22,6 +27,7 @@ FetchContent_MakeAvailable(SFML NeuralNetwork)
 
 file(GLOB_RECURSE LIB_SOURCES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
+    "${CMAKE_CURENT_SOURCE_DIR}/src/*.cu"   # Include CUDA source files
 )
 
 list(FILTER LIB_SOURCES EXCLUDE REGEX ".*main.cpp$")
@@ -29,10 +35,20 @@ list(FILTER LIB_SOURCES EXCLUDE REGEX ".*main.cpp$")
 add_library(digit_nn STATIC ${LIB_SOURCES})
 set_target_properties(digit_nn PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
+# Enable separable compilation for CUDA files
+set_target_properties(NeuralNetwork PROPERTIES
+    CUDA_SEPARABLE_COMPILATION ON
+      CUDA_RESOLVE_DEVICE_SYMBOLS ON       # <--- important for static libs
+)
+
 target_include_directories(digit_nn
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
+
+find_package(CUDAToolkit REQUIRED)
+
+find_package(CUDAToolkit REQUIRED)
 
 target_link_libraries(digit_nn
     PUBLIC
@@ -40,6 +56,8 @@ target_link_libraries(digit_nn
         sfml-window
         sfml-system
         NeuralNetwork
+        CUDA::cudart
+
 )
 
 add_executable(digit-nn src/digit_recognition.cpp)
@@ -51,6 +69,7 @@ target_link_libraries(digit-nn
         sfml-graphics
         sfml-window
         sfml-system
+        CUDA::cudart
 )
 
 target_link_libraries(abc-digit-nn
@@ -59,6 +78,8 @@ target_link_libraries(abc-digit-nn
         sfml-graphics
         sfml-window
         sfml-system
+        CUDA::cudart
+
 )
 
 message(STATUS "Configured image-recognition-nn executable")

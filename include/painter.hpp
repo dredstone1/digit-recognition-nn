@@ -24,6 +24,8 @@ constexpr float CELL_SIZE = (CANVAS_SIZE - (GRID_SIZE - 1) * PIXEL_GAP) / GRID_S
 
 const std::string WINDOW_NAME = "painter";
 
+constexpr int DEFAULT_BRUSH_RADIUS = 2;
+
 enum class MouseMode {
 	paint,
 	remove,
@@ -38,7 +40,7 @@ class Painter {
 
 	std::vector<float> values;
 
-	int brushRadius = 1;
+	int brushRadius = DEFAULT_BRUSH_RADIUS;
 
     bool windowResize{false};
 

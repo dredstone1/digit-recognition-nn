@@ -1,37 +1,52 @@
 #include "../include/painter.hpp"
 #include "../include/transformation.hpp"
+#include "consts.hpp"
+#include <algorithm>
 #include <iostream>
 #include <model.hpp>
+
+const int TOP_X = 5;
 
 static App display;
 static bool isOpen = false;
 
+constexpr bool SHOW_LIVE_T = false;
+
+void move(const nn::global::Tensor &p, nn::global::Tensor &result);
+
+std::vector<nn::global::ValueType> temp(784);
+
+std::vector<nn::global::ValueType> data(784);
 static nn::global::Transformation doTransform = [](const nn::global::Tensor &p) {
-	nn::global::Tensor newSample = p;
+	static nn::global::Tensor sample = p;
 
-	tr::stablize(newSample);
+	if (SHOW_LIVE_T) {
+		if (!isOpen)
+			display.open();
+		isOpen = true;
+		p.getData(data);
+		display.setValues(data);
+		std::this_thread::sleep_for(std::chrono::seconds(3)); // 3 seconds
+	}
 
-	// tr::box gridBox = tr::getBox(newSample);
-	// tr::addMovement(newSample, gridBox, 3);
-	return newSample;
-};
+	if (nn::global::Tensor::getGpuState()) {
+		move(p, sample);
 
-static nn::global::Transformation finalEvaluate = [](const nn::global::Tensor &p) {
-	nn::global::Tensor newSample = p;
+	} else {
+		tr::box newBox = tr::getBox(p);
 
-	tr::stablize(newSample);
+		int v = tr::getAction(-newBox.x, 28 - (newBox.width + newBox.x));
+		int h = tr::getAction(-newBox.y, 28 - (newBox.height + newBox.y));
 
-	// tr::box gridBox = tr::getBox(newSample);
-	// tr::addMovement(newSample, gridBox);
-	return newSample;
-};
+		tr::move(sample, newBox, h, v);
+	}
 
-const int EMNIST_BALANCED_MAP[47] = {
-    48, 49, 50, 51, 52, 53, 54, 55, 56, 57,             // 0–9 → '0'-'9'
-    65, 66, 67, 68, 69, 70, 71, 72, 73, 74,             // 10–19 → 'A'-'J'
-    75, 76, 77, 78, 79, 80, 81, 82, 83, 84,             // 20–29 → 'K'-'T'
-    85, 86, 87, 88, 89, 90,                             // 30–35 → 'U'-'Z'
-    97, 98, 100, 101, 102, 103, 104, 110, 113, 116, 117 // 36–46 → 'a','b','d','e','f','g','h','n','q','t','u'
+	if (SHOW_LIVE_T) {
+		std::this_thread::sleep_for(std::chrono::seconds(3)); // 3 seconds
+		sample.getData(data);
+		display.setValues(data);
+	}
+	return sample;
 };
 
 int main(int argc, char *argv[]) {
@@ -48,15 +63,17 @@ int main(int argc, char *argv[]) {
 			std::cout << "training command emnist\n";
 			std::vector<std::string> files{
 			    "../ModelData/Pemnist_balanced_train_data",
-			};
+			    "../ModelData/hebrew_train"};
 
-			model.train(files);
+			model.train(files, doTransform, doTransform);
 			model.save("emnist_model.txt");
 		}
 	}
 
-	nn::model::modelResult result = model.evaluateModel("../ModelData/Pemnist_balanced_test_data");
-	printf("prediction: %f\n", result.percentage);
+	// nn::model::modelResult result = model.evaluateModel({
+	//            "../ModelData/Pemnist_balanced_test_data",
+	//            "../ModelData/hebrew_test"}, doTransform);
+	// printf("final score: %f\n", result.percentage);
 	if (!isOpen)
 		display.open();
 	isOpen = true;
@@ -67,11 +84,28 @@ int main(int argc, char *argv[]) {
 		metrix = display.getValues();
 
 		model.runModel(metrix);
-		nn::global::Prediction pre = model.getPrediction();
+		std::vector<nn::global::ValueType> output = model.getOut();
 
-		char character = (pre.index < 47) ? static_cast<char>(EMNIST_BALANCED_MAP[pre.index]) : '?';
+		// Create vector of pairs (index, value)
+		std::vector<std::pair<size_t, nn::global::ValueType>> indexedOutput;
+		for (size_t i = 0; i < output.size(); ++i) {
+			indexedOutput.push_back({i, output[i]});
+		}
 
-		printf("output: %zu, %f, char: %c\n", pre.index, pre.value, character);
+		// Sort descending by value
+		std::sort(indexedOutput.begin(), indexedOutput.end(),
+		          [](const auto &a, const auto &b) { return a.second > b.second; });
+
+		// Print top X in one line
+		for (int i = 0; i < std::min(TOP_X, (int)indexedOutput.size()); ++i) {
+			size_t idx = indexedOutput[i].first;
+			nn::global::ValueType val = indexedOutput[i].second;
+			std::string character = emnist_balanced[idx].name;
+			std::cout << character << ":" << val;
+			if (i != std::min(TOP_X, (int)indexedOutput.size()) - 1)
+				std::cout << " | ";
+		}
+		std::cout << std::endl;
 	}
 
 	return 0;

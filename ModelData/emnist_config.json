@@ -1,43 +1,51 @@
 {
 	"visual config": {
-		"enableVisuals": true,
-		"enableNetwrokVisual": false,
+		"enable visual": true,
+		"enable network visual": false,
 		"modes": [
-			{ "state": "pause", "mode": true },
-			{ "state": "precise mode", "mode": false },
+			{ "state": "pause", "mode": false },
+			{ "state": "precise mode", "mode": true },
 			{ "state": "auto pause", "mode": false }
 		]
 	},
 	"training config": {
 		"batch size": 100,
-		"batch count": 10000,
+		"batch count": 100000,
 		"auto save": {
-			"saveEvery": 1000,
-			"dataFilenameAutoSave": "emnist_model.txt"
+			"saveEvery": 5000,
+			"dataFilenameAutoSave": "emnist_balanced_model.txt"
 		},
 		"auto evaluating": {
-			"evaluateEvery": 1000,
-			"dataBaseFilename": "../ModelData/Pemnist_balanced_test_data"
+			"dataBaseFilename": [
+				"../ModelData/Pemnist_balanced_test_data",
+				"../ModelData/hebrew_test"
+			]
 		},
 		"optimizer": {
 			"type": "const",
-			"lr": 0.1
+			"lr": 0.01
 		}
 	},
 	"network config": [
 		{
+			"type": "CNN",
+			"input shape": [28, 28, 1],
+			"output activation": 1,
+			"filter shape": [5, 5, 4, 1]
+		},
+		{
+			"type": "CNN",
+			"input shape": [24, 24, 4],
+			"output activation": 1,
+			"filter shape": [3, 3, 4, 2]
+		},
+		{
 			"type": "FNN",
-			"input size": 784,
-			"output size": 47,
+			"output size": 74,
 			"output activation": 4,
 			"layers": [
-				{ "size": 512, "activationType": 1 },
-				{ "size": 256, "activationType": 1 },
-				{ "size": 128, "activationType": 1 },
-				{ "size": 64, "activationType": 1 },
-				{ "size": 32, "activationType": 1 },
-				{ "size": 16, "activationType": 1 },
-				{ "size": 32, "activationType": 1 }
+				{ "size": 200, "activationType": 1 },
+				{ "size": 100, "activationType": 1 }
 			]
 		}
 	]

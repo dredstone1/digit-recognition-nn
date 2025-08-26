@@ -22,3 +22,7 @@ if __name__ == "__main__":
     input_file = 'emnist_balanced_test_data.nndb'
     output_file = 'Pemnist_balanced_test_data.nndb'
     process_file(input_file, output_file)
+
+    input_file = 'train_data.nndb'
+    output_file = 'Pemnist_train_data.nndb'
+    process_file(input_file, output_file)
