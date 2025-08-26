@@ -27,7 +27,7 @@ FetchContent_MakeAvailable(SFML NeuralNetwork)
 
 file(GLOB_RECURSE LIB_SOURCES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
-    "${CMAKE_CURENT_SOURCE_DIR}/src/*.cu"   # Include CUDA source files
+    "${CMAKE_CURENT_SOURCE_DIR}/src/*.cu"
 )
 
 list(FILTER LIB_SOURCES EXCLUDE REGEX ".*main.cpp$")
@@ -35,20 +35,15 @@ list(FILTER LIB_SOURCES EXCLUDE REGEX ".*main.cpp$")
 add_library(digit_nn STATIC ${LIB_SOURCES})
 set_target_properties(digit_nn PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
-# Enable separable compilation for CUDA files
 set_target_properties(NeuralNetwork PROPERTIES
     CUDA_SEPARABLE_COMPILATION ON
-      CUDA_RESOLVE_DEVICE_SYMBOLS ON       # <--- important for static libs
+    CUDA_RESOLVE_DEVICE_SYMBOLS ON
 )
 
 target_include_directories(digit_nn
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
-
-find_package(CUDAToolkit REQUIRED)
-
-find_package(CUDAToolkit REQUIRED)
 
 target_link_libraries(digit_nn
     PUBLIC
@@ -57,7 +52,6 @@ target_link_libraries(digit_nn
         sfml-system
         NeuralNetwork
         CUDA::cudart
-
 )
 
 add_executable(digit-nn src/digit_recognition.cpp)
@@ -79,7 +73,6 @@ target_link_libraries(abc-digit-nn
         sfml-window
         sfml-system
         CUDA::cudart
-
 )
 
 message(STATUS "Configured image-recognition-nn executable")
