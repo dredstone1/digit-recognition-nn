@@ -6,6 +6,7 @@ struct classify {
 };
 
 const classify emnist_balanced[] = {
+    // --- digits Start Here ---
     {"0", 0},
     {"1", 1},
     {"2", 2},
@@ -16,6 +17,7 @@ const classify emnist_balanced[] = {
     {"7", 7},
     {"8", 8},
     {"9", 9},
+    // --- English Characters Start Here ---
     {"A", 10},
     {"B", 11},
     {"C", 12},
