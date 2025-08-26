@@ -45,6 +45,8 @@ target_include_directories(digit_nn
         ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
+find_package(CUDAToolkit REQUIRED)
+
 target_link_libraries(digit_nn
     PUBLIC
         sfml-graphics
