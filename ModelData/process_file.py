@@ -12,7 +12,7 @@ def process_file(input_path, output_path):
             label = parts[0]  # Keep the first number unchanged
             pixels = parts[1:]  # The 784 pixel values
             normalized = [str(float(p) / 255.0) for p in pixels]
-            outfile.write(label + ' ' + ' '.join(normalized) + '\n')
+            outfile.write('p' + label + ' ' + ' '.join(normalized) + '\n')
 
 if __name__ == "__main__":
     input_file = 'emnist_balanced_train_data.nndb'

@@ -24,7 +24,7 @@ static nn::global::Transformation doTransform = [](const nn::global::Tensor &p) 
 		if (!isOpen)
 			display.open();
 		isOpen = true;
-		p.getData(data);
+		sample.getData(data);
 		display.setValues(data);
 		std::this_thread::sleep_for(std::chrono::seconds(3)); // 3 seconds
 	}
@@ -70,10 +70,11 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	// nn::model::modelResult result = model.evaluateModel({
-	//            "../ModelData/Pemnist_balanced_test_data",
-	//            "../ModelData/hebrew_test"}, doTransform);
-	// printf("final score: %f\n", result.percentage);
+	std::vector<std::string> files{
+	    "../ModelData/Pemnist_balanced_test_data",
+	    "../ModelData/hebrew_test"};
+	nn::model::modelResult result = model.evaluateModel(files, doTransform);
+	printf("final score evaluation: %f\n", result.percentage);
 	if (!isOpen)
 		display.open();
 	isOpen = true;

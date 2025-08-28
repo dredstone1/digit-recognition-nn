@@ -23,7 +23,7 @@
 		},
 		"optimizer": {
 			"type": "const",
-			"lr": 0.01
+			"lr": 1
 		}
 	},
 	"network config": [
@@ -44,7 +44,6 @@
 			"output size": 74,
 			"output activation": 4,
 			"layers": [
-				{ "size": 200, "activationType": 1 },
 				{ "size": 100, "activationType": 1 }
 			]
 		}

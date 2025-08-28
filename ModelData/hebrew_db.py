@@ -34,7 +34,7 @@ def process_and_remap_dataset(dataset_split, output_filename, duplicate_times=1)
             # Convert to normalized pixel string
             pixels = list(final_image.getdata())
             normalized = [p / 255.0 for p in pixels]
-            line = f"{new_label} {' '.join(map(str, normalized))}\n"
+            line = f"p{new_label} {' '.join(map(str, normalized))}\n"
             for i in range(0, 5):
                 processed_lines.append(line)
 
