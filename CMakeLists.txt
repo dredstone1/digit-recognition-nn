@@ -17,10 +17,9 @@ FetchContent_Declare(SFML
     GIT_SHALLOW ON
 )
 
-FetchContent_Declare(NeuralNetwork
-    GIT_REPOSITORY https://github.com/dredstone1/NeuralNetwork.git
-    GIT_TAG main
-    GIT_SHALLOW ON
+FetchContent_Declare(
+    NeuralNetwork
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../NeuralNetwork
 )
 
 FetchContent_MakeAvailable(SFML NeuralNetwork)

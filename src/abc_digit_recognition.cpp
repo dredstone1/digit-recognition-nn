@@ -62,8 +62,7 @@ int main(int argc, char *argv[]) {
 		} else if (arg == "-t") {
 			std::cout << "training command emnist\n";
 			std::vector<std::string> files{
-			    "../ModelData/Pemnist_balanced_train_data",
-			    "../ModelData/hebrew_train"};
+			    "../ModelData/Pemnist_balanced_train_data"};
 
 			model.train(files, doTransform, doTransform);
 			model.save("emnist_model.txt");
@@ -71,8 +70,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	std::vector<std::string> files{
-	    "../ModelData/Pemnist_balanced_test_data",
-	    "../ModelData/hebrew_test"};
+	    "../ModelData/Pemnist_balanced_test_data"};
 	nn::model::modelResult result = model.evaluateModel(files, doTransform);
 	printf("final score evaluation: %f\n", result.percentage);
 	if (!isOpen)

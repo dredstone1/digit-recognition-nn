@@ -9,21 +9,20 @@
 		]
 	},
 	"training config": {
-		"batch size": 100,
-		"batch count": 100000,
+		"batch size": 8,
+		"batch count": 500000,
 		"auto save": {
-			"saveEvery": 5000,
+			"saveEvery": 100000,
 			"dataFilenameAutoSave": "emnist_balanced_model.txt"
 		},
 		"auto evaluating": {
 			"dataBaseFilename": [
-				"../ModelData/Pemnist_balanced_test_data",
-				"../ModelData/hebrew_test"
+				"../ModelData/Pemnist_balanced_test_data"
 			]
 		},
 		"optimizer": {
 			"type": "const",
-			"lr": 1
+			"lr": 0.001
 		}
 	},
 	"network config": [
@@ -31,19 +30,20 @@
 			"type": "CNN",
 			"input shape": [28, 28, 1],
 			"output activation": 1,
-			"filter shape": [5, 5, 4, 1]
+			"filter shape": [5, 5, 5, 1]
 		},
 		{
 			"type": "CNN",
-			"input shape": [24, 24, 4],
+			"input shape": [24, 24, 5],
 			"output activation": 1,
-			"filter shape": [3, 3, 4, 2]
+			"filter shape": [3, 3, 5, 5]
 		},
 		{
 			"type": "FNN",
-			"output size": 74,
+			"output size": 47,
 			"output activation": 4,
 			"layers": [
+				{ "size": 300, "activationType": 1 },
 				{ "size": 100, "activationType": 1 }
 			]
 		}
