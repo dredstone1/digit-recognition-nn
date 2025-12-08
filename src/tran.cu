@@ -103,7 +103,7 @@ __global__ void addNoiseKernel(ValueType *data, float noise_range_low, float noi
 // Updated move function
 void move(const nn::global::Tensor &p, nn::global::Tensor &result) {
 	std::vector<ValueType> host_data(SIZE);
-	cudaMemcpy(host_data.data(), p.getGpuData(), SIZE * sizeof(ValueType), cudaMemcpyDeviceToHost);
+	cudaMemcpy(host_data.data(), p.getGpuDataP(), SIZE * sizeof(ValueType), cudaMemcpyDeviceToHost);
 
 	BoundingBox box;
 	bool content_found = false;
@@ -120,7 +120,7 @@ void move(const nn::global::Tensor &p, nn::global::Tensor &result) {
 	}
 
 	if (!content_found) {
-		cudaMemset(result.getGpuData(), 0, SIZE * sizeof(ValueType));
+		cudaMemset(result.getGpuDataP(), 0, SIZE * sizeof(ValueType));
 		return;
 	}
 
@@ -136,11 +136,11 @@ void move(const nn::global::Tensor &p, nn::global::Tensor &result) {
 	std::size_t blockSize = 256;
 	std::size_t numBlocks = (SIZE + blockSize - 1) / blockSize;
 
-	cudaMemset(result.getGpuData(), 0, SIZE * sizeof(ValueType));
+	cudaMemset(result.getGpuDataP(), 0, SIZE * sizeof(ValueType));
 
 	moveKernel<<<numBlocks, blockSize>>>(
-	    p.getGpuData(),
-	    result.getGpuData(),
+	    p.getGpuDataP(),
+	    result.getGpuDataP(),
 	    final_h_shift,
 	    final_v_shift);
 
@@ -156,7 +156,7 @@ void move(const nn::global::Tensor &p, nn::global::Tensor &result) {
 	int noise_seed = final_h_shift * 1000 + final_v_shift;
 
 	addNoiseKernel<<<numBlocks, blockSize>>>(
-	    result.getGpuData(),
+	    result.getGpuDataP(),
 	    noise_low,
 	    noise_high,
 	    noise_seed);

@@ -1,6 +1,8 @@
 #include "../include/painter.hpp"
 #include "../include/transformation.hpp"
 #include "consts.hpp"
+#include "dataBase.hpp"
+#include "tensor.hpp"
 #include <algorithm>
 #include <iostream>
 #include <model.hpp>
@@ -17,36 +19,40 @@ void move(const nn::global::Tensor &p, nn::global::Tensor &result);
 std::vector<nn::global::ValueType> temp(784);
 
 std::vector<nn::global::ValueType> data(784);
-static nn::global::Transformation doTransform = [](const nn::global::Tensor &p) {
-	static nn::global::Tensor sample = p;
 
-	if (SHOW_LIVE_T) {
-		if (!isOpen)
-			display.open();
-		isOpen = true;
-		sample.getData(data);
-		display.setValues(data);
-		std::this_thread::sleep_for(std::chrono::seconds(3)); // 3 seconds
+class dbt : public nn::model::DataBase {
+  public:
+	nn::model::TrainSample getSample(const size_t i) override {
+		 nn::model::TrainSample newSample(samples.samples[i]);
+
+		if (SHOW_LIVE_T) {
+			if (!isOpen)
+				display.open();
+			isOpen = true;
+			newSample.input.getData(data);
+			display.setValues(data);
+			std::this_thread::sleep_for(std::chrono::seconds(3)); // 3 seconds
+		}
+
+		if (nn::global::Tensor::getGpuState()) {
+			move(samples.samples[i].input, newSample.input);
+
+		} else {
+			tr::box newBox = tr::getBox(samples.samples[i].input);
+
+			int v = tr::getAction(-newBox.x, 28 - (newBox.width + newBox.x));
+			int h = tr::getAction(-newBox.y, 28 - (newBox.height + newBox.y));
+
+			tr::move(newSample.input, newBox, h, v);
+		}
+
+		if (SHOW_LIVE_T) {
+			std::this_thread::sleep_for(std::chrono::seconds(3)); // 3 seconds
+			newSample.input.getData(data);
+			display.setValues(data);
+		}
+		return newSample;
 	}
-
-	if (nn::global::Tensor::getGpuState()) {
-		move(p, sample);
-
-	} else {
-		tr::box newBox = tr::getBox(p);
-
-		int v = tr::getAction(-newBox.x, 28 - (newBox.width + newBox.x));
-		int h = tr::getAction(-newBox.y, 28 - (newBox.height + newBox.y));
-
-		tr::move(sample, newBox, h, v);
-	}
-
-	if (SHOW_LIVE_T) {
-		std::this_thread::sleep_for(std::chrono::seconds(3)); // 3 seconds
-		sample.getData(data);
-		display.setValues(data);
-	}
-	return sample;
 };
 
 int main(int argc, char *argv[]) {
@@ -62,16 +68,23 @@ int main(int argc, char *argv[]) {
 		} else if (arg == "-t") {
 			std::cout << "training command emnist\n";
 			std::vector<std::string> files{
-			    "../ModelData/Pemnist_balanced_train_data"};
+			    "../ModelData/emnist_letters_train"};
 
-			model.train(files, doTransform, doTransform);
+			dbt db;
+			db.load(files);
+			dbt db1;
+			db1.load({"..ModelData/emnist_letters_test"});
+
+			model.train(db, db1);
 			model.save("emnist_model.txt");
 		}
 	}
 
 	std::vector<std::string> files{
-	    "../ModelData/Pemnist_balanced_test_data"};
-	nn::model::modelResult result = model.evaluateModel(files, doTransform);
+	    "../ModelData/emnist_letters_test"};
+	nn::model::DataBase db2;
+	db2.load(files);
+	nn::model::modelResult result = model.evaluateModel(db2);
 	printf("final score evaluation: %f\n", result.percentage);
 	if (!isOpen)
 		display.open();
