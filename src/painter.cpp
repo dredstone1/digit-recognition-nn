@@ -1,4 +1,6 @@
 #include "../include/painter.hpp"
+#include "SFML/Graphics/Sprite.hpp"
+#include "SFML/Graphics/Texture.hpp"
 #include <algorithm>
 #include <cmath>
 
@@ -105,6 +107,7 @@ void Painter::applyBrush() {
 }
 
 void Painter::drawCanvas() {
+	sf::RenderTexture renderTexture({WINDOW_WIDTH, WINDOW_HEIGHT});
 	sf::RectangleShape cell(sf::Vector2f(CELL_SIZE, CELL_SIZE));
 	int index = 0;
 
@@ -115,10 +118,14 @@ void Painter::drawCanvas() {
 
 			float value = std::clamp(values[index] * 255, 0.f, 255.f);
 			cell.setFillColor(sf::Color(value, value, value));
-			window.draw(cell);
+			renderTexture.draw(cell);
 			++index;
 		}
 	}
+
+	renderTexture.display();
+	sf::Sprite sprite(renderTexture.getTexture());
+	window.draw(sprite);
 }
 
 void Painter::reset() {

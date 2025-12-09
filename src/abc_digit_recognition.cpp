@@ -4,6 +4,7 @@
 #include "dataBase.hpp"
 #include "tensor.hpp"
 #include <algorithm>
+#include <cstddef>
 #include <iostream>
 #include <model.hpp>
 
@@ -13,17 +14,16 @@ static App display;
 static bool isOpen = false;
 
 constexpr bool SHOW_LIVE_T = false;
+constexpr size_t GRID_LEN = GRID_SIZE * GRID_SIZE;
 
 void move(const nn::global::Tensor &p, nn::global::Tensor &result);
 
-std::vector<nn::global::ValueType> temp(784);
-
-std::vector<nn::global::ValueType> data(784);
+std::vector<nn::global::ValueType> data(GRID_LEN);
 
 class dbt : public nn::model::DataBase {
   public:
 	nn::model::TrainSample getSample(const size_t i) override {
-		 nn::model::TrainSample newSample(samples.samples[i]);
+		nn::model::TrainSample newSample(samples.samples[i]);
 
 		if (SHOW_LIVE_T) {
 			if (!isOpen)
