@@ -73,7 +73,7 @@ int main(int argc, char *argv[]) {
 			dbt db;
 			db.load(files);
 			dbt db1;
-			db1.load({"..ModelData/emnist_letters_test"});
+			db1.load({"../ModelData/emnist_letters_test"});
 
 			model.train(db, db1);
 			model.save("emnist_model.txt");
