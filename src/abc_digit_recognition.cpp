@@ -23,7 +23,7 @@ std::vector<nn::global::ValueType> data(GRID_LEN);
 class dbt : public nn::model::DataBase {
   public:
 	nn::model::TrainSample getSample(const size_t i) override {
-		nn::model::TrainSample newSample(samples.samples[i]);
+		nn::model::TrainSample newSample(samples.samples[i], true);
 
 		if (SHOW_LIVE_T) {
 			if (!isOpen)

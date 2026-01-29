@@ -9,7 +9,7 @@
 		]
 	},
 	"training config": {
-		"batch size": 32,
+		"batch size": 64,
 		"batch count": 100000,
 		"auto save": {
 			"saveEvery": 100000,
@@ -20,7 +20,7 @@
 		},
 		"optimizer": {
 			"type": "const",
-			"lr": 0.05
+			"lr": 0.5
 		},
 		"loss": {
 			"type": "CCE"
@@ -33,6 +33,8 @@
 			"input size": 784,
 			"output activation": 4,
 			"layers": [
+				{ "size": 300, "activationType": 1 },
+				{ "size": 200, "activationType": 1 },
 				{ "size": 100, "activationType": 1 }
 			]
 		}

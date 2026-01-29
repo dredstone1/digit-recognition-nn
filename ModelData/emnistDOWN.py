@@ -9,7 +9,7 @@ transform = transforms.Compose([
 ])
 train = datasets.EMNIST(
     root="data",
-    split="balanced",
+    split="bymerge",
     train=True,
     download=True,
     transform=transform
@@ -17,7 +17,7 @@ train = datasets.EMNIST(
 
 test = datasets.EMNIST(
     root="data",
-    split="balanced",
+    split="bymerge",
     train=False,
     download=True,
     transform=transform
