@@ -29,13 +29,13 @@
 	"network config": [
 		{
 			"type": "FNN",
-			"output size": 47,
 			"input size": 784,
+			"output size": 47,
 			"output activation": 4,
 			"layers": [
-				{ "size": 300, "activationType": 1 },
-				{ "size": 200, "activationType": 1 },
-				{ "size": 100, "activationType": 1 }
+				{ "size": 100, "activationType": 1 },
+				{ "size": 50, "activationType": 1 },
+				{ "size": 7, "activationType": 1 }
 			]
 		}
 	]
